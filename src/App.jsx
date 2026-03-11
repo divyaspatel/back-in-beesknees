@@ -184,7 +184,8 @@ function GardenSection({ exercises, tracking }) {
           {flowers.map((f, i) => (
             <img key={i} src={`${import.meta.env.BASE_URL}flower-single.png`}
               style={{ position:'absolute', left:`${f.x}%`, top:`${f.y}%`, width:16, height:'auto',
-                transform:`translateX(-50%) rotate(${f.rot}deg)`, pointerEvents:'none' }}
+                transform:`translateX(-50%) rotate(${f.rot}deg)`, pointerEvents:'none',
+                mixBlendMode:'multiply' }}
               alt=""/>
           ))}
         </div>
