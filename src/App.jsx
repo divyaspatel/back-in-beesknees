@@ -357,10 +357,21 @@ function ExerciseModal({ ex, mode, todayTracking, toggleSet, saveExercise, onClo
       <div style={{ background:C.white, borderRadius:'20px 20px 0 0', width:'100%', maxWidth:430, padding:'16px 20px 36px', maxHeight:'88vh', overflowY:'auto' }}>
         <div style={{ width:36, height:4, background:'#E5E7EB', borderRadius:2, margin:'0 auto 16px' }}/>
         <h2 style={{ fontFamily:"'Fredoka',sans-serif", fontSize:22, color:C.amberDk, marginBottom:16 }}>{ex.name}</h2>
-        <div style={{ background:C.grayLt, borderRadius:12, height:130, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:16, flexDirection:'column', gap:6 }}>
-          <span style={{ fontSize:32 }}>🎬</span>
-          <span style={{ fontSize:13, color:C.gray }}>Video coming soon</span>
-        </div>
+        {ex.video_url ? (
+          <div style={{ borderRadius:12, overflow:'hidden', marginBottom:16, aspectRatio:'16/9', background:'#000' }}>
+            <iframe
+              src={`https://www.youtube.com/embed/${new URL(ex.video_url).searchParams.get('v')}`}
+              style={{ width:'100%', height:'100%', border:'none' }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        ) : (
+          <div style={{ background:C.grayLt, borderRadius:12, height:130, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:16, flexDirection:'column', gap:6 }}>
+            <span style={{ fontSize:32 }}>🎬</span>
+            <span style={{ fontSize:13, color:C.gray }}>Video coming soon</span>
+          </div>
+        )}
         {mode==='pt' ? (
           <div style={{ display:'flex', gap:12, marginBottom:16 }}>
             {[{label:'Sets',val:editSets,set:setEditSets,max:10},{label:'Reps',val:editReps,set:setEditReps,max:50}].map(({label,val,set,max}) => (
