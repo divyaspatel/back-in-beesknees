@@ -50,8 +50,8 @@ function Ring({ pct, size = 88 }) {
 // ─── Hex ─────────────────────────────────────────────────────────────────────
 
 function Hex({ date, status, onTap }) {
-  const fills    = { done:C.green, partial:C.amber, missed:C.red,     future:C.grayLt, empty:C.amberLt }
-  const textFill = { done:'white', partial:'white', missed:C.redText, future:C.gray,   empty:C.gray }
+  const fills    = { done:'#A7F3D0', partial:'#FDE68A', missed:'#FEE2E2', future:C.grayLt, empty:C.white }
+  const textFill = { done:'#065F46', partial:'#92400E', missed:C.redText, future:C.gray,   empty:C.gray }
   const isToday = date === TODAY
   const tappable = onTap && date < TODAY
   const d = new Date(date + 'T12:00:00')
@@ -60,10 +60,10 @@ function Hex({ date, status, onTap }) {
       onClick={tappable ? () => onTap(date) : undefined}
       style={{ cursor: tappable ? 'pointer' : 'default' }}>
       <polygon points="17,1 33,10 33,28 17,37 1,28 1,10"
-        fill={fills[status] ?? C.amberLt}
-        stroke={isToday ? C.amberDk : 'none'} strokeWidth={isToday ? 2.5 : 0}/>
+        fill={isToday ? C.white : (fills[status] ?? C.white)}
+        stroke={isToday ? C.amber : 'none'} strokeWidth={isToday ? 2.5 : 0}/>
       <text x={17} y={23} textAnchor="middle" fontSize={isToday ? 12 : 11}
-        fontWeight={isToday ? 'bold' : 'normal'} fill={textFill[status] ?? C.gray}
+        fontWeight={isToday ? 'bold' : 'normal'} fill={isToday ? C.amber : (textFill[status] ?? C.gray)}
         fontFamily="Fredoka,sans-serif">
         {d.getDate()}
       </text>
