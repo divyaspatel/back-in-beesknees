@@ -97,242 +97,53 @@ function MonthCalendar({ dayStatus }) {
   )
 }
 
-// ─── Garden Section (pure SVG, no PNG) ───────────────────────────────────────
+// ─── Garden Section (V2 — photo bg + flower sprites) ─────────────────────────
 
-function GardenSection({ exercises, tracking }) {
-  const [debugMode, setDebugMode] = useState(false)
-  const [debugGroup, setDebugGroup] = useState(1)
+function seededRand(seed) {
+  const x = Math.sin(seed * 9301 + 49297) * 233280
+  return x - Math.floor(x)
+}
 
-  const unlocked = exercises.filter(e => e.unlocked)
-  if (unlocked.length === 0) return null
+function GardenSection({ exercises }) {
+  const [flowerCount, setFlowerCount] = useState(0)
 
-  const totalWeeklySets = unlocked.reduce((s, e) => s + e.sets, 0) * 7
-  const weekDone = Object.entries(tracking)
-    .filter(([date]) => date >= WEEK[0] && date <= WEEK[6])
-    .reduce((sum, [, dayT]) =>
-      sum + Object.values(dayT).reduce((s, sets) => s + sets.filter(Boolean).length, 0), 0)
+  useEffect(() => {
+    const repsMap = {}
+    exercises.forEach(e => { repsMap[e.id] = e.reps })
+    supabase.from('set_logs').select('exercise_id').then(({ data }) => {
+      if (!data) return
+      const total = data.reduce((sum, log) => sum + (repsMap[log.exercise_id] || 0), 0)
+      setFlowerCount(Math.min(total, 300))
+    })
+  }, [exercises])
 
-  const filledCount = totalWeeklySets > 0 ? Math.round(24 * weekDone / totalWeeklySets) : 0
-  // In debug mode only the selected group shows filled — great for visual testing
-  const filled = n => debugMode ? debugGroup === n : filledCount >= n
-  // SVG fill/stroke that transitions to color when group unlocks
-  const fc = (n, color) => ({ fill: filled(n) ? color : 'white', transition: 'fill 0.6s ease-in' })
-  const sc = (n, color) => ({ stroke: filled(n) ? color : '#ddd', transition: 'stroke 0.6s ease-in' })
-
-  const GROUP_LABELS = ['Sky','Sun','Clouds','Ground','Grass',
-    'SF stems','SF leaves','Tall SF petals','Tall SF center',
-    'Short SF petals','Short SF center','Cabbages','Carrot tops',
-    'Carrot bodies','Small plants','Water drops',
-    'Smita can','Smita shirt','Smita pants',
-    'Saavan can','Saavan shirt','Saavan pants',
-    'Both hair','Both skin']
+  const flowers = Array.from({ length: flowerCount }, (_, i) => ({
+    x: seededRand(i * 3 + 1) * 92 + 4,
+    y: seededRand(i * 3 + 2) * 32 + 56,
+    rot: (seededRand(i * 3 + 3) - 0.5) * 20,
+  }))
 
   return (
     <div style={{ background:C.white, borderRadius:16, overflow:'hidden', marginBottom:16, boxShadow:'0 1px 4px rgba(0,0,0,0.06)' }}>
-      <div style={{ padding:'12px 14px 6px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <span style={{ fontFamily:"'Fredoka',sans-serif", fontSize:16, color:C.amberDk }}>Weekly Garden</span>
-        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-          <span style={{ fontSize:12, color:C.gray }}>{weekDone}/{totalWeeklySets} sets</span>
-          <button onClick={() => setDebugMode(d => !d)}
-            style={{ fontSize:10, color:debugMode?C.pt:C.gray, fontWeight:debugMode?700:400, padding:'2px 7px', borderRadius:6, border:'1px solid '+(debugMode?C.pt:C.grayLt), background:debugMode?C.amberLt:'transparent' }}>
-            debug
-          </button>
-        </div>
+      <div style={{ padding:'12px 14px 8px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <span style={{ fontFamily:"'Fredoka',sans-serif", fontSize:16, color:C.amberDk }}>My Garden</span>
+        <span style={{ fontSize:12, color:C.gray }}>{flowerCount} flowers</span>
       </div>
       <div style={{ padding:'0 8px 8px' }}>
-        <div style={{ position:'relative' }}>
-          <svg viewBox="0 0 504 360" style={{ width:'100%', height:'auto', display:'block', borderRadius:8, border:'1px solid '+C.amberMd }}>
-
-            {/* ── 1. Sky ── */}
-            <rect x={0} y={0} width={504} height={242} stroke="none" style={fc(1,'#87CEEB')}/>
-
-            {/* ── 2. Sun ── */}
-            {Array.from({length:8},(_,i)=>{
-              const a=i*45*Math.PI/180
-              return <line key={i} x1={62+44*Math.cos(a)} y1={62+44*Math.sin(a)} x2={62+58*Math.cos(a)} y2={62+58*Math.sin(a)}
-                strokeWidth={3} strokeLinecap="round" style={sc(2,'#F59E0B')}/>
-            })}
-            <circle cx={62} cy={62} r={36} stroke="#D97706" strokeWidth={2.5} style={fc(2,'#FCD34D')}/>
-
-            {/* ── 3. Clouds ── */}
-            {[[185,56,20],[207,43,24],[230,56,19]].map(([cx,cy,r],i)=>
-              <circle key={i} cx={cx} cy={cy} r={r} stroke="#9CA3AF" strokeWidth={2} style={fc(3,'#F0F9FF')}/>
-            )}
-            {[[342,44,16],[362,33,20],[384,44,16]].map(([cx,cy,r],i)=>
-              <circle key={i+3} cx={cx} cy={cy} r={r} stroke="#9CA3AF" strokeWidth={2} style={fc(3,'#F0F9FF')}/>
-            )}
-
-            {/* ── 4. Ground ── */}
-            <rect x={0} y={238} width={504} height={122} stroke="#5D4037" strokeWidth={1.5} style={fc(4,'#C8963E')}/>
-            <line x1={0} y1={238} x2={504} y2={238} stroke="#2C1810" strokeWidth={2}/>
-
-            {/* ── 5. Grass tufts ── */}
-            {[15,55,110,180,255,318,378,432,478].map((x,i)=>(
-              <path key={i} d={`M${x},238 Q${x+4},222 ${x+8},238 Q${x+12},218 ${x+16},238 Q${x+20},224 ${x+24},238`}
-                fill="none" strokeWidth={2.5} strokeLinecap="round" style={sc(5,'#4CAF50')}/>
-            ))}
-
-            {/* ── 6. Sunflower stems ── */}
-            <rect x={452} y={112} width={14} height={130} rx={7} stroke="#1B5E20" strokeWidth={2} style={fc(6,'#388E3C')}/>
-            <rect x={420} y={174} width={12} height={68} rx={6} stroke="#1B5E20" strokeWidth={2} style={fc(6,'#388E3C')}/>
-
-            {/* ── 7. Sunflower leaves ── */}
-            <ellipse cx={442} cy={164} rx={22} ry={9} transform="rotate(-38,442,164)" stroke="#2E7D32" strokeWidth={2} style={fc(7,'#4CAF50')}/>
-            <ellipse cx={472} cy={140} rx={22} ry={9} transform="rotate(38,472,140)" stroke="#2E7D32" strokeWidth={2} style={fc(7,'#4CAF50')}/>
-            <ellipse cx={411} cy={205} rx={17} ry={7} transform="rotate(-30,411,205)" stroke="#2E7D32" strokeWidth={2} style={fc(7,'#4CAF50')}/>
-            <ellipse cx={436} cy={221} rx={15} ry={7} transform="rotate(28,436,221)" stroke="#2E7D32" strokeWidth={2} style={fc(7,'#4CAF50')}/>
-
-            {/* ── 8. Tall SF petals ── */}
-            {Array.from({length:14},(_,i)=>{
-              const a=i*(360/14)*Math.PI/180, px=459+32*Math.cos(a), py=100+32*Math.sin(a)
-              return <ellipse key={i} cx={px} cy={py} rx={9} ry={14} transform={`rotate(${i*360/14},${px},${py})`}
-                stroke="#F59E0B" strokeWidth={1.5} style={fc(8,'#FCD34D')}/>
-            })}
-
-            {/* ── 9. Tall SF center ── */}
-            <circle cx={459} cy={100} r={20} stroke="#3E2723" strokeWidth={2} style={fc(9,'#6D4C41')}/>
-            <circle cx={459} cy={100} r={11} stroke="none" style={fc(9,'#4E342E')}/>
-
-            {/* ── 10. Short SF petals ── */}
-            {Array.from({length:12},(_,i)=>{
-              const a=i*30*Math.PI/180, px=426+24*Math.cos(a), py=160+24*Math.sin(a)
-              return <ellipse key={i} cx={px} cy={py} rx={7} ry={11} transform={`rotate(${i*30},${px},${py})`}
-                stroke="#F59E0B" strokeWidth={1.5} style={fc(10,'#FCD34D')}/>
-            })}
-
-            {/* ── 11. Short SF center ── */}
-            <circle cx={426} cy={160} r={16} stroke="#3E2723" strokeWidth={2} style={fc(11,'#6D4C41')}/>
-            <circle cx={426} cy={160} r={9} stroke="none" style={fc(11,'#4E342E')}/>
-
-            {/* ── 12. Cabbages ── */}
-            {[0,36,72,108,144,180,216,252,288,324].map((a,i)=>
-              <ellipse key={i} cx={38} cy={300} rx={34} ry={20} transform={`rotate(${a},38,300)`} stroke="#1B5E20" strokeWidth={1.5} style={fc(12,'#2E7D32')}/>
-            )}
-            <circle cx={38} cy={300} r={16} stroke="#2E7D32" strokeWidth={1.5} style={fc(12,'#43A047')}/>
-            {[0,36,72,108,144,180,216,252,288,324].map((a,i)=>
-              <ellipse key={i+10} cx={90} cy={308} rx={28} ry={16} transform={`rotate(${a},90,308)`} stroke="#1B5E20" strokeWidth={1.5} style={fc(12,'#2E7D32')}/>
-            )}
-            <circle cx={90} cy={308} r={13} stroke="#2E7D32" strokeWidth={1.5} style={fc(12,'#43A047')}/>
-
-            {/* ── 13. Carrot tops ── */}
-            {[[322,256],[350,250],[378,256]].map(([cx,cy],i)=>(
-              <g key={i}>
-                <ellipse cx={cx-3} cy={cy-8} rx={3} ry={9} transform={`rotate(-18,${cx-3},${cy-8})`} stroke="#2E7D32" strokeWidth={1.5} style={fc(13,'#388E3C')}/>
-                <ellipse cx={cx+2} cy={cy-11} rx={3} ry={10} stroke="#2E7D32" strokeWidth={1.5} style={fc(13,'#388E3C')}/>
-                <ellipse cx={cx+7} cy={cy-8} rx={3} ry={9} transform={`rotate(18,${cx+7},${cy-8})`} stroke="#2E7D32" strokeWidth={1.5} style={fc(13,'#388E3C')}/>
-              </g>
-            ))}
-
-            {/* ── 14. Carrot bodies ── */}
-            {[[322,266],[350,260],[378,266]].map(([cx,cy],i)=>(
-              <path key={i} d={`M${cx-9},${cy} Q${cx},${cy+40} ${cx},${cy+44} Q${cx},${cy+40} ${cx+9},${cy} Z`}
-                stroke="#E64A19" strokeWidth={2} style={fc(14,'#FF7043')}/>
-            ))}
-
-            {/* ── 15. Small plants ── */}
-            {[[140,248],[162,240],[184,248],[206,241]].map(([cx,cy],i)=>(
-              <g key={i}>
-                <ellipse cx={cx} cy={cy} rx={8} ry={11} stroke="#2E7D32" strokeWidth={2} style={fc(15,'#66BB6A')}/>
-                <ellipse cx={cx-8} cy={cy+5} rx={6} ry={9} transform={`rotate(-24,${cx-8},${cy+5})`} stroke="#2E7D32" strokeWidth={2} style={fc(15,'#66BB6A')}/>
-                <ellipse cx={cx+8} cy={cy+5} rx={6} ry={9} transform={`rotate(24,${cx+8},${cy+5})`} stroke="#2E7D32" strokeWidth={2} style={fc(15,'#66BB6A')}/>
-              </g>
-            ))}
-
-            {/* ── 16. Water drops ── */}
-            {[[224,226],[240,240],[256,224],[272,240],[288,224],[304,240],[320,226]].map(([cx,cy],i)=>(
-              <ellipse key={i} cx={cx} cy={cy} rx={4} ry={5.5} transform={`rotate(${i%2===0?-12:12},${cx},${cy})`}
-                stroke="#1565C0" strokeWidth={1.5} style={fc(16,'#64B5F6')}/>
-            ))}
-
-            {/* ══ KAVITA ══ (arms drawn first — behind shirt in z-order, skin group 24) */}
-            <ellipse cx={98} cy={192} rx={13} ry={36} transform="rotate(14,98,192)" stroke="#2C1810" strokeWidth={2} style={fc(24,'#FFCC99')}/>
-            <ellipse cx={204} cy={196} rx={13} ry={34} transform="rotate(-16,204,196)" stroke="#2C1810" strokeWidth={2} style={fc(24,'#FFCC99')}/>
-
-            {/* ── 17. Smita can ── */}
-            <rect x={182} y={192} width={40} height={33} rx={7} stroke="#2C1810" strokeWidth={2} style={fc(17,'#81C784')}/>
-            <path d="M182,200 Q163,208 155,222" fill="none" strokeWidth={7} strokeLinecap="round" style={sc(17,'#388E3C')}/>
-            <path d="M222,196 Q234,203 222,214" fill="none" strokeWidth={4} strokeLinecap="round" style={sc(17,'#388E3C')}/>
-            <circle cx={155} cy={222} r={5} stroke="#2E7D32" strokeWidth={1.5} style={fc(17,'#A5D6A7')}/>
-
-            {/* ── 18. Smita shirt ── */}
-            <path d="M100,152 Q94,158 96,252 L200,252 Q202,158 196,152 Q174,144 148,144 Q122,144 100,152 Z"
-              stroke="#2C1810" strokeWidth={2} style={fc(18,'#F48FB1')}/>
-
-            {/* ── 19. Smita pants + shoes ── */}
-            <rect x={105} y={249} width={32} height={52} rx={6} stroke="#2C1810" strokeWidth={2} style={fc(19,'#5C9BD6')}/>
-            <rect x={141} y={249} width={32} height={52} rx={6} stroke="#2C1810" strokeWidth={2} style={fc(19,'#5C9BD6')}/>
-            <ellipse cx={121} cy={303} rx={21} ry={9} stroke="#2C1810" strokeWidth={2} style={fc(19,'#5D4037')}/>
-            <ellipse cx={157} cy={303} rx={21} ry={9} stroke="#2C1810" strokeWidth={2} style={fc(19,'#5D4037')}/>
-
-            {/* ══ SAAVAN ══ (arms first — group 24) */}
-            <ellipse cx={274} cy={188} rx={13} ry={36} transform="rotate(-14,274,188)" stroke="#2C1810" strokeWidth={2} style={fc(24,'#FFCC99')}/>
-            <ellipse cx={384} cy={196} rx={13} ry={34} transform="rotate(16,384,196)" stroke="#2C1810" strokeWidth={2} style={fc(24,'#FFCC99')}/>
-
-            {/* ── 20. Saavan can ── */}
-            <rect x={280} y={192} width={40} height={33} rx={7} stroke="#2C1810" strokeWidth={2} style={fc(20,'#4DD0E1')}/>
-            <path d="M322,200 Q340,208 348,222" fill="none" strokeWidth={7} strokeLinecap="round" style={sc(20,'#00838F')}/>
-            <path d="M280,196 Q268,203 280,214" fill="none" strokeWidth={4} strokeLinecap="round" style={sc(20,'#00838F')}/>
-            <circle cx={348} cy={222} r={5} stroke="#006064" strokeWidth={1.5} style={fc(20,'#B2EBF2')}/>
-
-            {/* ── 21. Saavan shirt ── */}
-            <path d="M278,152 Q272,158 274,252 L378,252 Q380,158 374,152 Q352,144 328,144 Q304,144 278,152 Z"
-              stroke="#2C1810" strokeWidth={2} style={fc(21,'#FFB74D')}/>
-
-            {/* ── 22. Saavan pants + shoes ── */}
-            <rect x={283} y={249} width={32} height={52} rx={6} stroke="#2C1810" strokeWidth={2} style={fc(22,'#5C9BD6')}/>
-            <rect x={319} y={249} width={32} height={52} rx={6} stroke="#2C1810" strokeWidth={2} style={fc(22,'#5C9BD6')}/>
-            <ellipse cx={299} cy={303} rx={21} ry={9} stroke="#2C1810" strokeWidth={2} style={fc(22,'#5D4037')}/>
-            <ellipse cx={335} cy={303} rx={21} ry={9} stroke="#2C1810" strokeWidth={2} style={fc(22,'#5D4037')}/>
-
-            {/* ── 23. Both kids' hair ── */}
-            {/* Smita hair — behind face */}
-            <ellipse cx={148} cy={94} rx={40} ry={38} stroke="#3E2723" strokeWidth={2.5} style={fc(23,'#7B4F2E')}/>
-            <ellipse cx={114} cy={126} rx={10} ry={26} transform="rotate(10,114,126)" stroke="#3E2723" strokeWidth={2} style={fc(23,'#7B4F2E')}/>
-            <circle cx={148} cy={72} r={10} stroke="#3E2723" strokeWidth={2} style={fc(23,'#7B4F2E')}/>
-            {/* Saavan hair — behind face */}
-            <ellipse cx={328} cy={90} rx={38} ry={34} stroke="#3E2723" strokeWidth={2.5} style={fc(23,'#5D4037')}/>
-            {[[-18,-6],[-8,-13],[4,-16],[16,-10],[26,-3]].map(([dx,dy],i)=>(
-              <ellipse key={i} cx={328+dx} cy={84+dy} rx={6} ry={10} transform={`rotate(${dx*1.5},${328+dx},${84+dy})`}
-                stroke="#3E2723" strokeWidth={2} style={fc(23,'#5D4037')}/>
-            ))}
-
-            {/* ── 24. Both kids' skin + faces (grand finale!) ── */}
-            {/* Smita face */}
-            <circle cx={148} cy={108} r={35} stroke="#2C1810" strokeWidth={2.5} style={fc(24,'#FFCC99')}/>
-            <circle cx={137} cy={112} r={5} fill="#2C1810"/>
-            <circle cx={159} cy={112} r={5} fill="#2C1810"/>
-            <path d="M136,124 Q148,134 160,124" fill="none" stroke="#2C1810" strokeWidth={2.5} strokeLinecap="round"/>
-            <circle cx={127} cy={120} r={6} style={{ fill:filled(24)?'#FFAA80':'none', transition:'fill 0.6s ease-in' }}/>
-            <circle cx={169} cy={120} r={6} style={{ fill:filled(24)?'#FFAA80':'none', transition:'fill 0.6s ease-in' }}/>
-            {/* Saavan face */}
-            <circle cx={328} cy={108} r={35} stroke="#2C1810" strokeWidth={2.5} style={fc(24,'#FFCC99')}/>
-            <circle cx={317} cy={112} r={5} fill="#2C1810"/>
-            <circle cx={339} cy={112} r={5} fill="#2C1810"/>
-            <path d="M316,124 Q328,134 340,124" fill="none" stroke="#2C1810" strokeWidth={2.5} strokeLinecap="round"/>
-            <circle cx={307} cy={120} r={6} style={{ fill:filled(24)?'#FFAA80':'none', transition:'fill 0.6s ease-in' }}/>
-            <circle cx={349} cy={120} r={6} style={{ fill:filled(24)?'#FFAA80':'none', transition:'fill 0.6s ease-in' }}/>
-
-            {/* Name labels — always visible */}
-            <text x={148} y={52} textAnchor="middle" fontFamily="'Fredoka',sans-serif" fontWeight={700} fontSize={16} fill="#92400E">Smita</text>
-            <text x={328} y={52} textAnchor="middle" fontFamily="'Fredoka',sans-serif" fontWeight={700} fontSize={16} fill="#92400E">Saavan</text>
-
-          </svg>
-
-          {/* Debug navigator */}
-          {debugMode && (
-            <div style={{ position:'absolute', bottom:8, left:'50%', transform:'translateX(-50%)', background:'rgba(0,0,0,0.8)', borderRadius:10, padding:'4px 12px', display:'flex', gap:8, alignItems:'center', whiteSpace:'nowrap' }}>
-              <button onClick={()=>setDebugGroup(n=>Math.max(1,n-1))}
-                style={{ color:'white', fontSize:20, lineHeight:1, padding:'0 4px', opacity:debugGroup===1?0.3:1 }}>‹</button>
-              <span style={{ color:'white', fontSize:11, fontFamily:'monospace' }}>{debugGroup}/24: {GROUP_LABELS[debugGroup-1]}</span>
-              <button onClick={()=>setDebugGroup(n=>Math.min(24,n+1))}
-                style={{ color:'white', fontSize:20, lineHeight:1, padding:'0 4px', opacity:debugGroup===24?0.3:1 }}>›</button>
-            </div>
-          )}
+        <div style={{ position:'relative', borderRadius:10, overflow:'hidden', border:'1px solid '+C.amberMd }}>
+          <img src={`${import.meta.env.BASE_URL}garden-bg.jpg`} style={{ width:'100%', display:'block' }} alt="garden"/>
+          {flowers.map((f, i) => (
+            <img key={i} src={`${import.meta.env.BASE_URL}flower-single.png`}
+              style={{ position:'absolute', left:`${f.x}%`, top:`${f.y}%`, width:16, height:'auto',
+                transform:`translateX(-50%) rotate(${f.rot}deg)`, pointerEvents:'none' }}
+              alt=""/>
+          ))}
         </div>
       </div>
     </div>
   )
 }
+
 
 // ─── Exercise Modal ───────────────────────────────────────────────────────────
 
@@ -719,7 +530,7 @@ export default function App() {
           </div>
 
           <MonthCalendar dayStatus={dayStatus}/>
-          {/* <GardenSection exercises={exercises} tracking={tracking}/> */}
+          <GardenSection exercises={exercises}/>
 
           <h2 style={{ fontFamily:"'Fredoka',sans-serif", fontSize:18, color:C.amberDk, marginBottom:10 }}>Today's Exercises</h2>
           {unlocked.length===0 ? (
