@@ -119,9 +119,38 @@ After knee surgery, PT recovery depends on daily adherence to a prescribed set o
 
 ---
 
+## V2 Features
+
+### 1. Past Day Review (Calendar Tap)
+- Mom can tap any previous day on the month calendar to view a read-only summary of that day
+- Shows which exercises she completed and which she did not — **no editing allowed**
+- Future days remain non-tappable
+
+### 2. Flower Garden (Motivational Visual)
+A persistent garden scene (`public/garden.png`) that grows flowers as mom completes her exercises over time.
+
+**Default state:**
+- Green garden with bushes, no flowers
+
+**Flower fill logic:**
+- Every set mom completes adds flowers to the garden
+- The number of flowers added per set = the number of reps in that set
+- Example: completing a set of 10 reps adds 10 flowers to the garden
+- Flowers accumulate across all time (not just the current week) — the garden is a permanent record of effort
+
+**Flower placement:**
+- Flowers appear only in the green grass/ground area of the image — the bottom ~45% of the image height
+- Within that zone, flowers are placed **randomly** across the full width
+- Flowers are small enough that ~300 can fit without looking crowded
+- New flowers fade in when added
+
+**Scale:**
+- Garden should feel meaningfully filled after a full week of consistent exercise, and lush after several weeks
+
+---
+
 ## Non-MVP (Future Considerations)
 
-- Garden / weekly progress widget (motivational visual — already built)
 - Progress ring showing today's completion %
 - PT mode for remote program management (already built)
 - Reminders or push notifications
