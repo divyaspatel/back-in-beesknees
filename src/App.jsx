@@ -104,7 +104,7 @@ function seededRand(seed) {
   return x - Math.floor(x)
 }
 
-function GardenSection({ exercises }) {
+function GardenSection({ exercises, tracking }) {
   const [flowerCount, setFlowerCount] = useState(0)
 
   useEffect(() => {
@@ -115,7 +115,7 @@ function GardenSection({ exercises }) {
       const total = data.reduce((sum, log) => sum + (repsMap[log.exercise_id] || 0), 0)
       setFlowerCount(Math.min(total, 300))
     })
-  }, [exercises])
+  }, [exercises, tracking])
 
   const flowers = Array.from({ length: flowerCount }, (_, i) => ({
     x: seededRand(i * 3 + 1) * 92 + 4,
@@ -530,7 +530,7 @@ export default function App() {
           </div>
 
           <MonthCalendar dayStatus={dayStatus}/>
-          <GardenSection exercises={exercises}/>
+          <GardenSection exercises={exercises} tracking={tracking}/>
 
           <h2 style={{ fontFamily:"'Fredoka',sans-serif", fontSize:18, color:C.amberDk, marginBottom:10 }}>Today's Exercises</h2>
           {unlocked.length===0 ? (
