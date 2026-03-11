@@ -594,10 +594,15 @@ export default function App() {
                 const sets=todayTracking[ex.id]??[], done=sets.filter(Boolean).length, allDone=done>=ex.sets
                 return (
                   <div key={ex.id} style={{ background:C.white, borderRadius:14, padding:'12px 14px', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', border:allDone?'2px solid '+C.green:'2px solid transparent' }}>
-                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10, cursor:'pointer' }} onClick={()=>setModal(ex)}>
-                      <div>
-                        <div style={{ fontWeight:700, fontSize:15, color:C.amberDk }}>{ex.name}</div>
-                        <div style={{ fontSize:12, color:C.amber, marginTop:4, fontWeight:700 }}>{ex.sets} sets × {ex.reps} reps</div>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10, cursor:'pointer' }} onClick={()=>setModal(ex)}>
+                      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                        <div style={{ width:52, height:52, flexShrink:0, background:C.amberLt, borderRadius:10, padding:4 }}>
+                          <ExerciseSVG name={ex.name} color={C.amberDk}/>
+                        </div>
+                        <div>
+                          <div style={{ fontWeight:700, fontSize:15, color:C.amberDk }}>{ex.name}</div>
+                          <div style={{ fontSize:12, color:C.amber, marginTop:4, fontWeight:700 }}>{ex.sets} sets × {ex.reps} reps</div>
+                        </div>
                       </div>
                       <span style={{ fontSize:20 }}>{allDone?'✅':'›'}</span>
                     </div>
