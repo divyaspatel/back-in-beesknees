@@ -537,7 +537,7 @@ export default function App() {
   const totalSets = unlocked.reduce((s,e)=>s+e.sets,0)
   const doneSets = unlocked.reduce((s,e)=>s+(todayTracking[e.id]??[]).filter(Boolean).length,0)
   const pct = totalSets>0 ? Math.round(doneSets/totalSets*100) : 0
-  const motivation = pct===100?'You crushed it today! 🌟':pct>=75?'Almost there, keep buzzing! 🐝':pct>=50?"Halfway there! You're a star 💛":pct>=25?'Great start! Keep going! 🌸':doneSets>0?'Every rep counts! 🍯':"Ready to buzz? Let's go! 🐝"
+  const motivation = pct===100?'You crushed it today, Mom! 🌟':pct>=75?'Almost there, Mom — keep buzzing! 🐝':pct>=50?"Halfway there, Mom! You're a star 💛":pct>=25?'Great start, Mom! Keep going! 🌸':doneSets>0?'Every rep counts, Mom! 🍯':"Ready to buzz, Mom? Let's go! 🐝"
 
   if (loading) return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:C.bg, fontSize:56 }}>🐝</div>
   if (error) return (
@@ -677,7 +677,7 @@ export default function App() {
       {selectedDay && <DayReviewModal date={selectedDay} exercises={exercises} tracking={tracking} onClose={()=>setSelectedDay(null)}/>}
 
       <nav style={{ position:'fixed', bottom:0, left:'50%', transform:'translateX(-50%)', width:'100%', maxWidth:430, background:C.white, borderTop:'1px solid '+C.amberMd, display:'flex', padding:'8px 0 14px', zIndex:50 }}>
-        {[{id:'home',icon:'🏠',label:'Home'},{id:'garden',icon:'🌸',label:'Exercises'},{id:'equipment',icon:'🎒',label:'Equipment'}].map(({id,icon,label}) => (
+        {[{id:'home',icon:'🐝',label:'Today'},{id:'garden',icon:'💪🏽',label:'All Exercises'},{id:'equipment',icon:'🎒',label:'Equipment'}].map(({id,icon,label}) => (
           <button key={id} onClick={()=>setView(id)}
             style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, color:view===id?C.amber:C.gray, fontSize:10, fontWeight:700 }}>
             <span style={{ fontSize:22 }}>{icon}</span>
