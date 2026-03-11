@@ -49,13 +49,16 @@ function Ring({ pct, size = 88 }) {
 
 // ─── Hex ─────────────────────────────────────────────────────────────────────
 
-function Hex({ date, status }) {
+function Hex({ date, status, onTap }) {
   const fills    = { done:C.green, partial:C.amber, missed:C.red,     future:C.grayLt, empty:C.amberLt }
   const textFill = { done:'white', partial:'white', missed:C.redText, future:C.gray,   empty:C.gray }
   const isToday = date === TODAY
+  const tappable = onTap && date < TODAY
   const d = new Date(date + 'T12:00:00')
   return (
-    <svg width={30} height={34} viewBox="0 0 34 38">
+    <svg width={30} height={34} viewBox="0 0 34 38"
+      onClick={tappable ? () => onTap(date) : undefined}
+      style={{ cursor: tappable ? 'pointer' : 'default' }}>
       <polygon points="17,1 33,10 33,28 17,37 1,28 1,10"
         fill={fills[status] ?? C.amberLt}
         stroke={isToday ? C.amberDk : 'none'} strokeWidth={isToday ? 2.5 : 0}/>
@@ -70,7 +73,7 @@ function Hex({ date, status }) {
 
 // ─── Month Calendar ───────────────────────────────────────────────────────────
 
-function MonthCalendar({ dayStatus }) {
+function MonthCalendar({ dayStatus, onDayTap }) {
   const year = _now.getFullYear(), month = _now.getMonth()
   const firstDow = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
@@ -89,9 +92,55 @@ function MonthCalendar({ dayStatus }) {
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', justifyItems:'center', rowGap:2 }}>
         {cells.map((date,i) => date
-          ? <Hex key={i} date={date} status={dayStatus(date)}/>
+          ? <Hex key={i} date={date} status={dayStatus(date)} onTap={onDayTap}/>
           : <div key={i} style={{ width:30, height:34 }}/>
         )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Day Review Modal ─────────────────────────────────────────────────────────
+
+function DayReviewModal({ date, exercises, tracking, onClose }) {
+  const dayT = tracking[date] ?? {}
+  const unlocked = exercises.filter(e => e.unlocked)
+  const label = new Date(date + 'T12:00:00').toLocaleDateString('default', { weekday:'long', month:'long', day:'numeric' })
+  const totalSets = unlocked.reduce((s,e) => s + e.sets, 0)
+  const doneSets  = unlocked.reduce((s,e) => s + (dayT[e.id]??[]).filter(Boolean).length, 0)
+
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.45)', zIndex:100, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
+      onClick={e => e.target===e.currentTarget && onClose()}>
+      <div style={{ background:C.white, borderRadius:'20px 20px 0 0', width:'100%', maxWidth:430, padding:'16px 20px 36px', maxHeight:'80vh', overflowY:'auto' }}>
+        <div style={{ width:36, height:4, background:'#E5E7EB', borderRadius:2, margin:'0 auto 14px' }}/>
+        <div style={{ fontFamily:"'Fredoka',sans-serif", fontSize:20, color:C.amberDk, marginBottom:2 }}>{label}</div>
+        <div style={{ fontSize:13, color:C.gray, marginBottom:16 }}>{doneSets} of {totalSets} sets completed</div>
+
+        {unlocked.length === 0 && (
+          <p style={{ fontSize:14, color:C.gray, textAlign:'center' }}>No exercises were unlocked on this day.</p>
+        )}
+
+        {unlocked.map(ex => {
+          const sets = dayT[ex.id] ?? []
+          const doneCount = sets.filter(Boolean).length
+          const allDone = doneCount >= ex.sets
+          return (
+            <div key={ex.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 0', borderBottom:'1px solid '+C.grayLt }}>
+              <div>
+                <div style={{ fontWeight:700, fontSize:14, color:C.amberDk }}>{ex.name}</div>
+                <div style={{ fontSize:12, color:C.gray, marginTop:2 }}>{ex.sets} sets × {ex.reps} reps</div>
+              </div>
+              <div style={{ display:'flex', gap:4 }}>
+                {Array.from({ length: ex.sets }, (_, i) => (
+                  <div key={i} style={{ width:20, height:20, borderRadius:'50%', background: sets[i] ? C.green : C.grayLt, border:'2px solid '+(sets[i] ? C.green : '#E5E7EB') }}/>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+
+        <button onClick={onClose} style={{ width:'100%', padding:'12px', background:C.grayLt, color:C.gray, borderRadius:12, fontWeight:600, fontSize:14, fontFamily:'inherit', marginTop:16 }}>Close</button>
       </div>
     </div>
   )
@@ -398,6 +447,7 @@ function ExerciseCard({ ex, mode, onTap }) {
 export default function App() {
   const [view, setView] = useState('home')
   const [mode, setMode] = useState('mom')
+  const [selectedDay, setSelectedDay] = useState(null)
   const [exercises, setExercises] = useState([])
   const [tracking, setTracking] = useState({})
   const [equipment, setEquipment] = useState([])
@@ -529,7 +579,7 @@ export default function App() {
             <Ring pct={pct}/>
           </div>
 
-          <MonthCalendar dayStatus={dayStatus}/>
+          <MonthCalendar dayStatus={dayStatus} onDayTap={setSelectedDay}/>
           <GardenSection exercises={exercises} tracking={tracking}/>
 
           <h2 style={{ fontFamily:"'Fredoka',sans-serif", fontSize:18, color:C.amberDk, marginBottom:10 }}>Today's Exercises</h2>
@@ -619,6 +669,7 @@ export default function App() {
       )}
 
       {modal && <ExerciseModal ex={modal} mode={mode} todayTracking={todayTracking} toggleSet={toggleSet} saveExercise={saveExercise} onClose={()=>setModal(null)}/>}
+      {selectedDay && <DayReviewModal date={selectedDay} exercises={exercises} tracking={tracking} onClose={()=>setSelectedDay(null)}/>}
 
       <nav style={{ position:'fixed', bottom:0, left:'50%', transform:'translateX(-50%)', width:'100%', maxWidth:430, background:C.white, borderTop:'1px solid '+C.amberMd, display:'flex', padding:'8px 0 14px', zIndex:50 }}>
         {[{id:'home',icon:'🏠',label:'Home'},{id:'garden',icon:'🌸',label:'Exercises'},{id:'equipment',icon:'🎒',label:'Equipment'}].map(({id,icon,label}) => (
