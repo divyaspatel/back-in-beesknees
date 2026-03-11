@@ -5,7 +5,7 @@
 
 ## Overview
 
-Back in BeesKnees is a mobile web app that helps one person (mom, Kavita) stay consistent with her physical therapy exercises while recovering from knee surgery. Her physical therapist manages the exercise program through the same app via a hidden PT mode — no separate admin interface needed.
+Back in BeesKnees is a mobile web app that helps one person (mom, Smita) stay consistent with her physical therapy exercises while recovering from knee surgery. Her physical therapist manages the exercise program through the same app via a hidden PT mode — no separate admin interface needed.
 
 ---
 
@@ -32,7 +32,7 @@ After knee surgery, PT recovery depends on daily adherence to a prescribed set o
 
 ## Users
 
-### Kavita (Mom) — Primary User
+### Smita (Mom) — Primary User
 - Recovering from knee surgery
 - Not highly technical; needs a simple, encouraging interface
 - Uses the app on her phone daily to track sets as she completes them
@@ -40,8 +40,8 @@ After knee surgery, PT recovery depends on daily adherence to a prescribed set o
 - The only person who logs into the app
 
 ### The PT — Secondary User
-- Manages Kavita's exercise program remotely
-- Accesses PT mode by holding the app title for 700ms (hidden from Kavita)
+- Manages Smita's exercise program remotely
+- Accesses PT mode by holding the app title for 700ms (hidden from Smita)
 - Uses the app to unlock/lock exercises, adjust sets/reps, and leave notes
 - Does not need a separate login or admin portal
 
@@ -49,24 +49,24 @@ After knee surgery, PT recovery depends on daily adherence to a prescribed set o
 
 ## User Stories
 
-### Kavita
-- As Kavita, I want to see today's exercises organized by Morning / Afternoon / Evening, so I know what to do at each part of the day.
-- As Kavita, I want to tap "Start Set" and have a popup walk me through each exercise in order, so I don't have to remember what comes next.
-- As Kavita, I want each exercise popup to show me a video of how to do the movement, so I can always do it correctly.
-- As Kavita, I want to navigate forward and backward through exercises in a set, so I can go at my own pace.
-- As Kavita, I want to see all the exercises available to me in one place, so I know what my current program looks like.
-- As Kavita, I want to see the exercises I haven't graduated to yet, so I know what I'm working toward.
-- As Kavita, I want each exercise card to show a nickname and an image, so I can recognize it at a glance.
-- As Kavita, I want to tap into an exercise and see the full details — video, reps/sets, which body part it targets, and how to progress it — so I have everything I need in one place.
-- As Kavita, I want to update a checklist of the equipment I have at home, so the app always reflects what I can actually use.
-- As Kavita, I want to see a calendar at the top of my Today page showing which days I've completed all, some, or no exercises, so I can see my consistency over the month.
-- As Kavita, I want to see a visual reward as I progress through the week, so I stay motivated to keep going.
+### Smita
+- As Smita, I want to see today's exercises organized by Morning / Afternoon / Evening, so I know what to do at each part of the day.
+- As Smita, I want to tap "Start Set" and have a popup walk me through each exercise in order, so I don't have to remember what comes next.
+- As Smita, I want each exercise popup to show me a video of how to do the movement, so I can always do it correctly.
+- As Smita, I want to navigate forward and backward through exercises in a set, so I can go at my own pace.
+- As Smita, I want to see all the exercises available to me in one place, so I know what my current program looks like.
+- As Smita, I want to see the exercises I haven't graduated to yet, so I know what I'm working toward.
+- As Smita, I want each exercise card to show a nickname and an image, so I can recognize it at a glance.
+- As Smita, I want to tap into an exercise and see the full details — video, reps/sets, which body part it targets, and how to progress it — so I have everything I need in one place.
+- As Smita, I want to update a checklist of the equipment I have at home, so the app always reflects what I can actually use.
+- As Smita, I want to see a calendar at the top of my Today page showing which days I've completed all, some, or no exercises, so I can see my consistency over the month.
+- As Smita, I want to see a visual reward as I progress through the week, so I stay motivated to keep going.
 
 ### The PT
-- As the PT, I want to unlock or lock specific exercises for Kavita's current phase of recovery, so she only sees what's appropriate for her.
-- As the PT, I want to update the sets and reps for any exercise, so the program evolves as Kavita gets stronger.
-- As the PT, I want to leave notes on exercises (e.g. "keep knee at 90°"), so Kavita has guidance while doing the movement.
-- As the PT, I want to access PT mode discreetly without a login screen, so the app stays simple for Kavita.
+- As the PT, I want to unlock or lock specific exercises for Smita's current phase of recovery, so she only sees what's appropriate for her.
+- As the PT, I want to update the sets and reps for any exercise, so the program evolves as Smita gets stronger.
+- As the PT, I want to leave notes on exercises (e.g. "keep knee at 90°"), so Smita has guidance while doing the movement.
+- As the PT, I want to access PT mode discreetly without a login screen, so the app stays simple for Smita.
 
 ---
 

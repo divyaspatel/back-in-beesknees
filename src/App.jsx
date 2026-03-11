@@ -123,7 +123,7 @@ function GardenSection({ exercises, tracking }) {
     'SF stems','SF leaves','Tall SF petals','Tall SF center',
     'Short SF petals','Short SF center','Cabbages','Carrot tops',
     'Carrot bodies','Small plants','Water drops',
-    'Kavita can','Kavita shirt','Kavita pants',
+    'Smita can','Smita shirt','Smita pants',
     'Saavan can','Saavan shirt','Saavan pants',
     'Both hair','Both skin']
 
@@ -248,17 +248,17 @@ function GardenSection({ exercises, tracking }) {
             <ellipse cx={98} cy={192} rx={13} ry={36} transform="rotate(14,98,192)" stroke="#2C1810" strokeWidth={2} style={fc(24,'#FFCC99')}/>
             <ellipse cx={204} cy={196} rx={13} ry={34} transform="rotate(-16,204,196)" stroke="#2C1810" strokeWidth={2} style={fc(24,'#FFCC99')}/>
 
-            {/* ── 17. Kavita can ── */}
+            {/* ── 17. Smita can ── */}
             <rect x={182} y={192} width={40} height={33} rx={7} stroke="#2C1810" strokeWidth={2} style={fc(17,'#81C784')}/>
             <path d="M182,200 Q163,208 155,222" fill="none" strokeWidth={7} strokeLinecap="round" style={sc(17,'#388E3C')}/>
             <path d="M222,196 Q234,203 222,214" fill="none" strokeWidth={4} strokeLinecap="round" style={sc(17,'#388E3C')}/>
             <circle cx={155} cy={222} r={5} stroke="#2E7D32" strokeWidth={1.5} style={fc(17,'#A5D6A7')}/>
 
-            {/* ── 18. Kavita shirt ── */}
+            {/* ── 18. Smita shirt ── */}
             <path d="M100,152 Q94,158 96,252 L200,252 Q202,158 196,152 Q174,144 148,144 Q122,144 100,152 Z"
               stroke="#2C1810" strokeWidth={2} style={fc(18,'#F48FB1')}/>
 
-            {/* ── 19. Kavita pants + shoes ── */}
+            {/* ── 19. Smita pants + shoes ── */}
             <rect x={105} y={249} width={32} height={52} rx={6} stroke="#2C1810" strokeWidth={2} style={fc(19,'#5C9BD6')}/>
             <rect x={141} y={249} width={32} height={52} rx={6} stroke="#2C1810" strokeWidth={2} style={fc(19,'#5C9BD6')}/>
             <ellipse cx={121} cy={303} rx={21} ry={9} stroke="#2C1810" strokeWidth={2} style={fc(19,'#5D4037')}/>
@@ -285,7 +285,7 @@ function GardenSection({ exercises, tracking }) {
             <ellipse cx={335} cy={303} rx={21} ry={9} stroke="#2C1810" strokeWidth={2} style={fc(22,'#5D4037')}/>
 
             {/* ── 23. Both kids' hair ── */}
-            {/* Kavita hair — behind face */}
+            {/* Smita hair — behind face */}
             <ellipse cx={148} cy={94} rx={40} ry={38} stroke="#3E2723" strokeWidth={2.5} style={fc(23,'#7B4F2E')}/>
             <ellipse cx={114} cy={126} rx={10} ry={26} transform="rotate(10,114,126)" stroke="#3E2723" strokeWidth={2} style={fc(23,'#7B4F2E')}/>
             <circle cx={148} cy={72} r={10} stroke="#3E2723" strokeWidth={2} style={fc(23,'#7B4F2E')}/>
@@ -297,7 +297,7 @@ function GardenSection({ exercises, tracking }) {
             ))}
 
             {/* ── 24. Both kids' skin + faces (grand finale!) ── */}
-            {/* Kavita face */}
+            {/* Smita face */}
             <circle cx={148} cy={108} r={35} stroke="#2C1810" strokeWidth={2.5} style={fc(24,'#FFCC99')}/>
             <circle cx={137} cy={112} r={5} fill="#2C1810"/>
             <circle cx={159} cy={112} r={5} fill="#2C1810"/>
@@ -313,7 +313,7 @@ function GardenSection({ exercises, tracking }) {
             <circle cx={349} cy={120} r={6} style={{ fill:filled(24)?'#FFAA80':'none', transition:'fill 0.6s ease-in' }}/>
 
             {/* Name labels — always visible */}
-            <text x={148} y={52} textAnchor="middle" fontFamily="'Fredoka',sans-serif" fontWeight={700} fontSize={16} fill="#92400E">Kavita</text>
+            <text x={148} y={52} textAnchor="middle" fontFamily="'Fredoka',sans-serif" fontWeight={700} fontSize={16} fill="#92400E">Smita</text>
             <text x={328} y={52} textAnchor="middle" fontFamily="'Fredoka',sans-serif" fontWeight={700} fontSize={16} fill="#92400E">Saavan</text>
 
           </svg>

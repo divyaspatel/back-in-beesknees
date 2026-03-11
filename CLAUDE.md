@@ -72,13 +72,13 @@ The garden shows a coloring-book PNG (`public/garden.png`, two children watering
 **Fill logic:** 24 SVG groups fill progressively as mom completes sets during the week.
 - `totalWeeklySets = unlocked exercises × sets_each × 7`
 - `filledCount = Math.round(24 × weekDone / totalWeeklySets)`
-- Groups fill in a rewarding order: sky/clouds/ground → nature → sunflowers → clothing/cans → hair → skin (Kavita & Saavan "come to life" last)
+- Groups fill in a rewarding order: sky/clouds/ground → nature → sunflowers → clothing/cans → hair → skin (Smita & Saavan "come to life" last)
 - Each group fades in with `opacity: 0.6s ease-in` transition
 
 **Debug mode:** A small "debug" button in the header toggles an overlay showing a red dashed bounding box for each of the 24 groups, with ‹ › arrows to cycle through them. Used for tuning SVG region coordinates.
 
 SVG viewBox is `0 0 504 360` with `preserveAspectRatio="none"`.
-Labels "Kavita" (girl, left) and "Saavan" (boy, right) appear above the children.
+Labels "Smita" (girl, left) and "Saavan" (boy, right) appear above the children.
 
 ## Current State
 
