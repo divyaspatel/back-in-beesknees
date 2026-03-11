@@ -180,7 +180,7 @@ function GardenSection({ exercises, tracking }) {
       </div>
       <div style={{ padding:'0 8px 8px' }}>
         <div style={{ position:'relative', borderRadius:10, overflow:'hidden', border:'1px solid '+C.amberMd }}>
-          <img src={`${import.meta.env.BASE_URL}garden-bg.jpg`} style={{ width:'100%', display:'block', filter:'brightness(1.5) saturate(0.7)' }} alt="garden"/>
+          <img src={`${import.meta.env.BASE_URL}garden-bg.jpg`} style={{ width:'100%', display:'block' }} alt="garden"/>
           {flowers.map((f, i) => (
             <img key={i} src={`${import.meta.env.BASE_URL}flower-single.png`}
               style={{ position:'absolute', left:`${f.x}%`, top:`${f.y}%`, width:16, height:'auto',
