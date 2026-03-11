@@ -606,7 +606,7 @@ export default function App() {
                       </div>
                       <span style={{ fontSize:20 }}>{allDone?'✅':'›'}</span>
                     </div>
-                    <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                    <div style={{ display:'flex', gap:8, flexWrap:'wrap', paddingLeft:62 }}>
                       {Array.from({length:ex.sets},(_,i) => (
                         <button key={i} onClick={()=>toggleSet(ex.id,i)}
                           style={{ width:38, height:38, borderRadius:10, background:sets[i]?C.amber:C.amberLt, color:sets[i]?C.white:C.amberDk, fontWeight:700, fontSize:13, boxShadow:sets[i]?'0 2px 6px rgba(245,158,11,0.4)':'none', transition:'all 0.15s' }}>
