@@ -427,13 +427,155 @@ function ExerciseModal({ ex, mode, todayTracking, toggleSet, saveExercise, onClo
   )
 }
 
+// ─── Exercise SVG Illustrations ───────────────────────────────────────────────
+
+function ExerciseSVG({ name, color = C.amberDk }) {
+  const p = { stroke:color, fill:'none', strokeLinecap:'round', strokeLinejoin:'round', strokeWidth:2.5 }
+  const arr = { ...p, strokeWidth:1.8, opacity:0.55 }
+  const gnd = { ...p, strokeWidth:1.2, opacity:0.3, strokeDasharray:'4,3' }
+
+  const scenes = {
+    'Straight Leg Raise': <>
+      <line x1={2} y1={76} x2={98} y2={76} {...gnd}/>
+      <circle cx={12} cy={62} r={7} {...p}/>
+      <line x1={19} y1={66} x2={48} y2={66} {...p}/>
+      <line x1={30} y1={68} x2={44} y2={74} {...p}/>
+      <line x1={48} y1={66} x2={88} y2={66} {...p}/>
+      <line x1={88} y1={66} x2={88} y2={76} {...p}/>
+      <line x1={48} y1={66} x2={78} y2={40} {...p}/>
+      <line x1={78} y1={40} x2={84} y2={44} {...p}/>
+      <line x1={86} y1={46} x2={86} y2={32} {...arr}/>
+      <polyline points="82,36 86,32 90,36" {...arr}/>
+    </>,
+    'Heel Slides': <>
+      <line x1={2} y1={76} x2={98} y2={76} {...gnd}/>
+      <circle cx={12} cy={62} r={7} {...p}/>
+      <line x1={19} y1={66} x2={48} y2={66} {...p}/>
+      <line x1={30} y1={68} x2={44} y2={74} {...p}/>
+      <line x1={48} y1={66} x2={88} y2={66} {...p}/>
+      <line x1={88} y1={66} x2={88} y2={76} {...p}/>
+      <line x1={48} y1={66} x2={68} y2={50} {...p}/>
+      <line x1={68} y1={50} x2={56} y2={68} {...p}/>
+      <line x1={56} y1={68} x2={50} y2={76} {...p}/>
+      <line x1={54} y1={74} x2={44} y2={74} {...arr}/>
+      <polyline points="48,71 44,74 48,77" {...arr}/>
+    </>,
+    'TKE': <>
+      <line x1={10} y1={92} x2={90} y2={92} {...gnd}/>
+      <circle cx={50} cy={14} r={7} {...p}/>
+      <line x1={50} y1={21} x2={50} y2={52} {...p}/>
+      <line x1={50} y1={32} x2={36} y2={46} {...p}/>
+      <line x1={50} y1={32} x2={64} y2={46} {...p}/>
+      <line x1={50} y1={52} x2={42} y2={74} {...p}/>
+      <line x1={42} y1={74} x2={40} y2={92} {...p}/>
+      <line x1={50} y1={52} x2={58} y2={70} {...p}/>
+      <line x1={58} y1={70} x2={62} y2={92} {...p}/>
+      <path d="M 30,72 Q 50,64 58,70" {...arr} strokeDasharray="3,2"/>
+      <line x1={68} y1={76} x2={75} y2={88} {...arr}/>
+      <polyline points="72,88 75,88 75,84" {...arr}/>
+    </>,
+    'Glute Bridges': <>
+      <line x1={2} y1={86} x2={98} y2={86} {...gnd}/>
+      <circle cx={10} cy={72} r={7} {...p}/>
+      <line x1={17} y1={76} x2={34} y2={76} {...p}/>
+      <line x1={24} y1={78} x2={30} y2={86} {...p}/>
+      <line x1={34} y1={76} x2={52} y2={54} {...p}/>
+      <line x1={52} y1={54} x2={70} y2={74} {...p}/>
+      <line x1={70} y1={74} x2={70} y2={86} {...p}/>
+      <line x1={52} y1={54} x2={76} y2={74} {...p}/>
+      <line x1={76} y1={74} x2={76} y2={86} {...p}/>
+      <line x1={88} y1={66} x2={88} y2={50} {...arr}/>
+      <polyline points="84,54 88,50 92,54" {...arr}/>
+    </>,
+    'Clam Shells': <>
+      <line x1={2} y1={86} x2={98} y2={86} {...gnd}/>
+      <circle cx={14} cy={54} r={7} {...p}/>
+      <line x1={20} y1={58} x2={50} y2={72} {...p}/>
+      <line x1={28} y1={54} x2={40} y2={54} {...p}/>
+      <line x1={50} y1={72} x2={76} y2={74} {...p}/>
+      <line x1={76} y1={74} x2={84} y2={84} {...p}/>
+      <line x1={50} y1={72} x2={70} y2={52} {...p}/>
+      <line x1={70} y1={52} x2={82} y2={62} {...p}/>
+      <line x1={62} y1={56} x2={56} y2={48} {...arr}/>
+      <polyline points="53,51 56,48 59,51" {...arr}/>
+    </>,
+    'Calf Raises': <>
+      <line x1={20} y1={92} x2={80} y2={92} {...gnd}/>
+      <circle cx={50} cy={12} r={7} {...p}/>
+      <line x1={50} y1={19} x2={50} y2={50} {...p}/>
+      <line x1={50} y1={30} x2={38} y2={44} {...p}/>
+      <line x1={50} y1={30} x2={62} y2={44} {...p}/>
+      <line x1={50} y1={50} x2={42} y2={72} {...p}/>
+      <line x1={42} y1={72} x2={40} y2={88} {...p}/>
+      <line x1={40} y1={88} x2={35} y2={92} {...p}/>
+      <line x1={50} y1={50} x2={58} y2={72} {...p}/>
+      <line x1={58} y1={72} x2={60} y2={88} {...p}/>
+      <line x1={60} y1={88} x2={65} y2={92} {...p}/>
+      <line x1={80} y1={52} x2={80} y2={36} {...arr}/>
+      <polyline points="76,40 80,36 84,40" {...arr}/>
+    </>,
+    'Calf Stretch': <>
+      <line x1={5} y1={92} x2={88} y2={92} {...gnd}/>
+      <line x1={86} y1={18} x2={86} y2={92} {...p} strokeWidth={1.8} opacity={0.35}/>
+      <circle cx={40} cy={20} r={7} {...p}/>
+      <line x1={42} y1={27} x2={46} y2={52} {...p}/>
+      <line x1={44} y1={36} x2={65} y2={30} {...p}/>
+      <line x1={65} y1={30} x2={86} y2={28} {...p}/>
+      <line x1={44} y1={36} x2={64} y2={38} {...p}/>
+      <line x1={64} y1={38} x2={86} y2={38} {...p}/>
+      <line x1={46} y1={52} x2={54} y2={70} {...p}/>
+      <line x1={54} y1={70} x2={52} y2={92} {...p}/>
+      <line x1={46} y1={52} x2={34} y2={72} {...p}/>
+      <line x1={34} y1={72} x2={28} y2={92} {...p}/>
+    </>,
+    'Side to Side Squat': <>
+      <line x1={4} y1={92} x2={96} y2={92} {...gnd}/>
+      <circle cx={50} cy={26} r={7} {...p}/>
+      <line x1={50} y1={33} x2={50} y2={56} {...p}/>
+      <line x1={50} y1={42} x2={36} y2={52} {...p}/>
+      <line x1={50} y1={42} x2={64} y2={52} {...p}/>
+      <line x1={50} y1={56} x2={34} y2={72} {...p}/>
+      <line x1={34} y1={72} x2={28} y2={92} {...p}/>
+      <line x1={50} y1={56} x2={66} y2={72} {...p}/>
+      <line x1={66} y1={72} x2={72} y2={92} {...p}/>
+      <line x1={10} y1={64} x2={20} y2={64} {...arr}/>
+      <polyline points="13,61 10,64 13,67" {...arr}/>
+      <line x1={90} y1={64} x2={80} y2={64} {...arr}/>
+      <polyline points="87,61 90,64 87,67" {...arr}/>
+    </>,
+    'Mini Squats': <>
+      <line x1={20} y1={92} x2={80} y2={92} {...gnd}/>
+      <circle cx={50} cy={18} r={7} {...p}/>
+      <line x1={50} y1={25} x2={50} y2={52} {...p}/>
+      <line x1={50} y1={36} x2={37} y2={46} {...p}/>
+      <line x1={50} y1={36} x2={63} y2={46} {...p}/>
+      <line x1={50} y1={52} x2={42} y2={68} {...p}/>
+      <line x1={42} y1={68} x2={40} y2={92} {...p}/>
+      <line x1={50} y1={52} x2={58} y2={68} {...p}/>
+      <line x1={58} y1={68} x2={60} y2={92} {...p}/>
+      <line x1={82} y1={40} x2={82} y2={56} {...arr}/>
+      <polyline points="78,52 82,56 86,52" {...arr}/>
+    </>,
+  }
+
+  return (
+    <svg viewBox="0 0 100 100" style={{ width:'100%', height:'auto', display:'block' }}>
+      {scenes[name] ?? null}
+    </svg>
+  )
+}
+
 // ─── Exercise Card ────────────────────────────────────────────────────────────
 
 function ExerciseCard({ ex, mode, onTap }) {
+  const iconColor = ex.unlocked ? C.amberDk : C.gray
   return (
-    <div onClick={onTap} style={{ background:ex.unlocked?C.white:C.grayLt, borderRadius:14, padding:'14px 12px', textAlign:'center', cursor:'pointer', border:ex.unlocked?'2px solid '+C.amberMd:mode==='pt'?'2px dashed '+C.pt:'2px solid transparent', boxShadow:ex.unlocked?'0 1px 4px rgba(0,0,0,0.07)':'none', opacity:ex.unlocked?1:0.65, transition:'all 0.2s', userSelect:'none' }}>
-      <div style={{ fontWeight:700, fontSize:13, color:ex.unlocked?C.amberDk:C.gray, lineHeight:1.2 }}>{ex.name}</div>
-      <div style={{ marginTop:6, fontSize:11, fontWeight:700, color:ex.unlocked?C.amber:C.gray }}>
+    <div onClick={onTap} style={{ background:ex.unlocked?C.white:C.grayLt, borderRadius:14, padding:'12px 10px 10px', textAlign:'center', cursor:'pointer', border:ex.unlocked?'2px solid '+C.amberMd:mode==='pt'?'2px dashed '+C.pt:'2px solid transparent', boxShadow:ex.unlocked?'0 1px 4px rgba(0,0,0,0.07)':'none', opacity:ex.unlocked?1:0.65, transition:'all 0.2s', userSelect:'none' }}>
+      <div style={{ background:ex.unlocked?C.amberLt:C.grayLt, borderRadius:10, padding:'8px 6px', marginBottom:8 }}>
+        <ExerciseSVG name={ex.name} color={iconColor}/>
+      </div>
+      <div style={{ fontWeight:700, fontSize:12, color:ex.unlocked?C.amberDk:C.gray, lineHeight:1.2 }}>{ex.name}</div>
+      <div style={{ marginTop:4, fontSize:11, fontWeight:700, color:ex.unlocked?C.amber:C.gray }}>
         {ex.unlocked?`${ex.sets} × ${ex.reps}`:mode==='pt'?'Tap to unlock':'Locked'}
       </div>
     </div>
