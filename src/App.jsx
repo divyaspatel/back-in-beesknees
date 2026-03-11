@@ -719,7 +719,7 @@ export default function App() {
           </div>
 
           <MonthCalendar dayStatus={dayStatus}/>
-          <GardenSection exercises={exercises} tracking={tracking}/>
+          {/* <GardenSection exercises={exercises} tracking={tracking}/> */}
 
           <h2 style={{ fontFamily:"'Fredoka',sans-serif", fontSize:18, color:C.amberDk, marginBottom:10 }}>Today's Exercises</h2>
           {unlocked.length===0 ? (
