@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from './lib/supabase'
+import { getBostonHour } from './lib/timeUtils'
+import ExerciseSet from './components/ExerciseSet'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -450,9 +452,22 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState(null)
   const [exercises, setExercises] = useState([])
   const [tracking, setTracking] = useState({})
+  const [completedSets, setCompletedSets] = useState(() => {
+    const saved = localStorage.getItem('beesknees_completed_sets');
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem('beesknees_sets_date');
+    if (saved && savedDate === today) return JSON.parse(saved);
+    return {};
+  });
   const [equipment, setEquipment] = useState([])
   const [myEq, setMyEq] = useState(new Set())
   const [modal, setModal] = useState(null)
+  
+  useEffect(() => {
+    localStorage.setItem('beesknees_completed_sets', JSON.stringify(completedSets));
+    localStorage.setItem('beesknees_sets_date', new Date().toDateString());
+  }, [completedSets]);
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const holdRef = useRef(null)
@@ -485,6 +500,45 @@ export default function App() {
 
   function titleHoldStart(e) { e.preventDefault(); holdRef.current = setTimeout(() => setMode(m => m==='pt'?'mom':'pt'), 700) }
   function titleHoldEnd() { clearTimeout(holdRef.current) }
+
+  async function handleBatchComplete(setKey, notes) {
+    const categories = {
+      morning: 'Strength', // Example mapping, in real app we might just filter
+      afternoon: 'Mobility',
+      evening: 'Balance'
+    }
+    // For this implementation, let's filter unlocked exercises for the set
+    // In a real scenario, we might have an 'exercise_sets' table or similar.
+    // For now, let's assume all unlocked exercises are part of these sets.
+    const toComplete = exercises.filter(e => e.unlocked)
+    
+    // Create log entries for ALL sets of ALL unlocked exercises
+    const inserts = []
+    toComplete.forEach(ex => {
+      for (let i = 0; i < ex.sets; i++) {
+        inserts.push({ exercise_id: ex.id, date: TODAY, set_index: i })
+      }
+    })
+
+    if (inserts.length > 0) {
+      // Use upsert to avoid duplicate errors if some were already done
+      await supabase.from('set_logs').upsert(inserts, { onConflict: 'exercise_id,date,set_index' })
+    }
+
+    setCompletedSets(prev => ({
+      ...prev,
+      [setKey]: { completed: true, notes, timestamp: new Date().toISOString() }
+    }))
+
+    // Update local tracking state to reflect batch completion
+    setTracking(prev => {
+      const next = { ...prev, [TODAY]: { ...(prev[TODAY]??{}) } }
+      toComplete.forEach(ex => {
+        next[TODAY][ex.id] = Array.from({ length: ex.sets }, () => true)
+      })
+      return next
+    })
+  }
 
   async function toggleSet(exId, setIdx) {
     const isDone = !!(tracking[TODAY]?.[exId]?.[setIdx])
@@ -589,34 +643,31 @@ export default function App() {
               <p style={{ fontSize:14, lineHeight:1.6 }}>No exercises unlocked yet.<br/>Your PT will set these up!</p>
             </div>
           ) : (
-            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-              {unlocked.map(ex => {
-                const sets=todayTracking[ex.id]??[], done=sets.filter(Boolean).length, allDone=done>=ex.sets
-                return (
-                  <div key={ex.id} style={{ background:C.white, borderRadius:14, padding:'12px 14px', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', border:allDone?'2px solid '+C.green:'2px solid transparent' }}>
-                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10, cursor:'pointer' }} onClick={()=>setModal(ex)}>
-                      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                        <div style={{ width:52, height:52, flexShrink:0, background:C.amberLt, borderRadius:10, padding:4 }}>
-                          <ExerciseSVG name={ex.name} color={C.amberDk}/>
-                        </div>
-                        <div>
-                          <div style={{ fontWeight:700, fontSize:15, color:C.amberDk }}>{ex.name}</div>
-                          <div style={{ fontSize:12, color:C.amber, marginTop:4, fontWeight:700 }}>{ex.sets} sets × {ex.reps} reps</div>
-                        </div>
-                      </div>
-                      <span style={{ fontSize:20 }}>{allDone?'✅':'›'}</span>
-                    </div>
-                    <div style={{ display:'flex', gap:8, flexWrap:'wrap', paddingLeft:62 }}>
-                      {Array.from({length:ex.sets},(_,i) => (
-                        <button key={i} onClick={()=>toggleSet(ex.id,i)}
-                          style={{ width:38, height:38, borderRadius:10, background:sets[i]?C.amber:C.amberLt, color:sets[i]?C.white:C.amberDk, fontWeight:700, fontSize:13, boxShadow:sets[i]?'0 2px 6px rgba(245,158,11,0.4)':'none', transition:'all 0.15s' }}>
-                          {sets[i]?'✓':i+1}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )
-              })}
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              <ExerciseSet 
+                setKey="morning"
+                exercises={unlocked}
+                isCompleted={!!completedSets.morning?.completed}
+                notes={completedSets.morning?.notes}
+                onComplete={handleBatchComplete}
+                photoUrl="/photo incentive/photo1.png"
+              />
+              <ExerciseSet 
+                setKey="afternoon"
+                exercises={unlocked}
+                isCompleted={!!completedSets.afternoon?.completed}
+                notes={completedSets.afternoon?.notes}
+                onComplete={handleBatchComplete}
+                photoUrl="/photo incentive/photo2.png"
+              />
+              <ExerciseSet 
+                setKey="evening"
+                exercises={unlocked}
+                isCompleted={!!completedSets.evening?.completed}
+                notes={completedSets.evening?.notes}
+                onComplete={handleBatchComplete}
+                photoUrl="/photo incentive/photo3.png"
+              />
             </div>
           )}
         </div>
