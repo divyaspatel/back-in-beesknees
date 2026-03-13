@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, CheckCircle, Clock, Lock, RotateCcw } from 'lucide-react';
 import { getWindowStatus, TIME_WINDOWS } from '../lib/timeUtils';
-import FlowerDisplay from './FlowerDisplay';
 import PhotoIncentive from './PhotoIncentive';
 
 const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComplete, onUndo, photoUrl }) => {
@@ -29,146 +28,137 @@ const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComp
     }
   };
 
-  const getSetColor = () => {
-    if (setKey === 'morning') return 'pink';
-    if (setKey === 'afternoon') return 'yellow';
-    return 'purple';
-  };
-
-  // Only count reps for ONE set since each period represents one set completion
-  const flowerCount = exercises.reduce((sum, ex) => sum + (ex.reps || 0), 0);
-
   return (
     <div className={`exercise-set ${isCompleted ? 'completed' : ''}`} style={{ 
       background: 'white', 
       borderRadius: '16px', 
-      overflow: 'hidden', 
-      boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-      border: isCompleted ? '2px solid #10B981' : '1px solid #FDE68A'
+      border: `2px solid ${isCompleted ? '#FDE68A' : '#F3F4F6'}`,
+      padding: '16px',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
+      transition: 'all 0.3s ease',
+      marginBottom: '12px'
     }}>
-      <div 
-        className="set-header" 
-        onClick={() => setIsOpen(!isOpen)}
-        style={{ padding: '16px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: isCompleted ? 'rgba(16, 185, 129, 0.05)' : 'white' }}
-      >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '1.5rem' }}>{windowInfo.emoji}</span>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            borderRadius: '10px', 
+            background: isCompleted ? '#FEF3C7' : '#F3F4F6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.2rem'
+          }}>
+            {windowInfo.emoji}
+          </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#92400E', fontFamily: "'Fredoka', sans-serif" }}>
+            <h3 style={{ margin: 0, fontSize: '1rem', color: '#92400E', fontFamily: "'Fredoka', sans-serif" }}>
               {setKey.charAt(0).toUpperCase() + setKey.slice(1)} Set
             </h3>
-            <span style={{ fontSize: '0.75rem', color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '4px' }}>
-               <Clock size={12} /> {windowInfo.label}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#9CA3AF' }}>
+              <Clock size={12} /> {windowInfo.label}
+            </div>
           </div>
         </div>
+        
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {isCompleted && <CheckCircle color="#10B981" size={20} />}
-          {isOpen ? <ChevronUp size={20} color="#9CA3AF" /> : <ChevronDown size={20} color="#9CA3AF" />}
+          {isCompleted && <CheckCircle size={20} color="#10B981" />}
+          <button onClick={() => setIsOpen(!isOpen)} style={{ color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+            {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </button>
         </div>
       </div>
 
       {isOpen && (
-        <div className="set-content" style={{ padding: '0 16px 16px', borderTop: '1px solid #F3F4F6' }}>
-          {!isCompleted && (
-            <div style={{ marginTop: '16px' }}>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#9CA3AF', marginBottom: '8px' }}>
-                How are you feeling? (Required)
-              </label>
-              <textarea 
-                placeholder="e.g., Still sore, but feeling stronger!" 
-                value={notes} 
-                onChange={(e) => setNotes(e.target.value)}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #F3F4F6', fontSize: '0.9rem', minHeight: '80px', fontFamily: 'inherit' }}
-              />
-            </div>
-          )}
-
-          {isCompleted && savedNotes && (
-            <div style={{ marginTop: '16px', background: '#FDE68A', padding: '12px', borderRadius: '12px' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#92400E', display: 'block', marginBottom: '4px' }}>📋 YOUR NOTE:</span>
-              <p style={{ margin: 0, fontSize: '0.9rem', color: '#92400E' }}>"{savedNotes}"</p>
-            </div>
-          )}
-
-          <div style={{ marginTop: '16px' }}>
-            <h4 style={{ fontSize: '0.8rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 8px 0' }}>Exercises</h4>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {exercises.map((ex, i) => (
-                <li key={i} style={{ padding: '8px 0', borderBottom: '1px solid #F3F4F6', fontSize: '0.9rem', color: isCompleted ? '#9CA3AF' : '#10B981', textDecoration: isCompleted ? 'line-through' : 'none' }}>
-                  {ex.name} — {ex.sets} × {ex.reps}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div style={{ marginTop: '16px' }}>
-            {!isCompleted ? (
-              <div style={{ position: 'relative' }}>
-                <button 
-                  onClick={handleComplete}
-                  disabled={windowStatus !== 'active'}
+        <div style={{ marginTop: '16px', borderTop: '1px solid #F3F4F6', paddingTop: '16px' }}>
+          {!isCompleted ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#92400E' }}>Batch Notes</span>
+                <textarea 
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="How are you feeling before starting? ✍️"
                   style={{ 
                     width: '100%', 
-                    padding: '14px', 
-                    background: windowStatus === 'active' ? '#F59E0B' : '#F3F4F6', 
-                    color: windowStatus === 'active' ? 'white' : '#9CA3AF',
-                    border: 'none', 
-                    borderRadius: '12px', 
-                    fontWeight: 'bold', 
-                    cursor: windowStatus === 'active' ? 'pointer' : 'not-allowed',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                  title={windowStatus !== 'active' ? "Outside time window" : ""}
-                >
-                  {windowStatus !== 'active' && <Lock size={16} />}
-                  {windowStatus === 'active' ? 'Complete Set' : 'Outside time window'}
-                </button>
-              </div>
-            ) : (
-              <div className="reward-section animate-fade-in" style={{ 
-                marginTop: '20px', 
-                padding: '20px', 
-                background: 'rgba(253, 230, 138, 0.2)', 
-                borderRadius: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-                alignItems: 'center'
-              }}>
-                <div style={{ width: '100%' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#92400E', display: 'block', marginBottom: '8px', textAlign: 'center' }}>
-                    🌸 YOUR REWARD GARDEN
-                  </span>
-                  <FlowerDisplay count={flowerCount} color={getSetColor()} />
-                </div>
-                <div style={{ width: '100%', borderTop: '1px solid rgba(245, 158, 11, 0.1)', paddingTop: '16px' }}>
-                  <PhotoIncentive photoUrl={photoUrl} />
-                </div>
-                <button 
-                  onClick={handleUndo}
-                  style={{ 
-                    marginTop: '8px',
-                    padding: '8px 12px', 
-                    fontSize: '0.75rem', 
-                    color: '#9CA3AF', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '4px',
-                    fontFamily: 'inherit',
-                    background: 'transparent',
+                    padding: '10px', 
+                    borderRadius: '8px', 
                     border: '1px solid #E5E7EB',
-                    borderRadius: '8px'
+                    fontSize: '0.9rem',
+                    fontFamily: 'inherit',
+                    minHeight: '60px',
+                    outline: 'none',
+                    boxSizing: 'border-box'
                   }}
-                >
-                  <RotateCcw size={12} /> Mark as Not Done
-                </button>
+                />
               </div>
-            )}
-          </div>
+
+              <button 
+                onClick={handleComplete}
+                disabled={windowStatus !== 'active'}
+                style={{ 
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '12px',
+                  background: windowStatus === 'active' ? '#F59E0B' : '#E5E7EB',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  opacity: windowStatus === 'active' ? 1 : 0.6,
+                  cursor: windowStatus === 'active' ? 'pointer' : 'not-allowed',
+                  border: 'none',
+                  fontFamily: 'inherit'
+                }}
+              >
+                {windowStatus === 'active' ? (
+                  <>Complete All {exercises.length} Exercises ✨</>
+                ) : windowStatus === 'upcoming' ? (
+                  <><Clock size={16} /> Starts at {windowInfo.label}</>
+                ) : (
+                  <><Lock size={16} /> Window Closed</>
+                )}
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ background: '#FFFBEB', padding: '12px', borderRadius: '10px', border: '1px solid #FEF3C7' }}>
+                <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#D97706', marginBottom: '4px', textTransform: 'uppercase' }}>
+                  Your Note
+                </span>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: '#92400E', fontStyle: 'italic' }}>
+                  "{notes}"
+                </p>
+              </div>
+              
+              <div style={{ width: '100%', borderTop: '1px solid rgba(245, 158, 11, 0.1)', paddingTop: '16px' }}>
+                <PhotoIncentive photoUrl={photoUrl} />
+              </div>
+              <button 
+                onClick={handleUndo}
+                style={{ 
+                  marginTop: '8px',
+                  padding: '8px 12px', 
+                  fontSize: '0.75rem', 
+                  color: '#9CA3AF', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '4px',
+                  fontFamily: 'inherit',
+                  background: 'transparent',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                <RotateCcw size={12} /> Mark as Not Done
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

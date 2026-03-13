@@ -635,10 +635,13 @@ export default function App() {
 
   const unlocked = exercises.filter(e => e.unlocked)
   const todayTracking = tracking[TODAY] ?? {}
-  const totalSets = unlocked.reduce((s,e)=>s+e.sets,0)
-  const doneSets = unlocked.reduce((s,e)=>s+(todayTracking[e.id]??[]).filter(Boolean).length,0)
-  const pct = totalSets>0 ? Math.round(doneSets/totalSets*100) : 0
-  const motivation = pct===100?'You crushed it today, Mom! 🌟':pct>=75?'Almost there, Mom — keep buzzing! 🐝':pct>=50?"Halfway there, Mom! You're a star 💛":pct>=25?'Great start, Mom! Keep going! 🌸':doneSets>0?'Every rep counts, Mom! 🍯':"Ready to buzz, Mom? Let's go! 🐝"
+  
+  // Progress is now strictly based on the 3 session buttons
+  const sessions = ['morning', 'afternoon', 'evening'];
+  const doneSessionsCount = sessions.filter(s => !!completedSets[s]?.completed).length;
+  const pct = Math.round((doneSessionsCount / 3) * 100);
+  
+  const motivation = pct===100?'You crushed it today, Mom! 🌟':pct>=66?'Almost there, Mom — keep buzzing! 🐝':pct>=33?"Great start, Mom! You're a star 💛":"Ready to buzz, Mom? Let's go! 🐝"
 
   if (loading) return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:C.bg, fontSize:56 }}>🐝</div>
   if (error) return (
