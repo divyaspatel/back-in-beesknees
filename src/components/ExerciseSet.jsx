@@ -35,8 +35,8 @@ const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComp
     return 'purple';
   };
 
-  // Simplified reps count for flower display in this project
-  const flowerCount = exercises.reduce((sum, ex) => sum + (ex.reps * (ex.sets || 1)), 0);
+  // Only count reps for ONE set since each period represents one set completion
+  const flowerCount = exercises.reduce((sum, ex) => sum + (ex.reps || 0), 0);
 
   return (
     <div className={`exercise-set ${isCompleted ? 'completed' : ''}`} style={{ 

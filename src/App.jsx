@@ -504,12 +504,12 @@ export default function App() {
   function titleHoldEnd() { clearTimeout(holdRef.current) }
 
   async function handleBatchComplete(setKey, notes) {
-    const toComplete = exercises.filter(e => e.unlocked)
+    const setIdx = setKey === 'morning' ? 0 : setKey === 'afternoon' ? 1 : 2
+    const toComplete = exercises.filter(e => e.unlocked && e.sets > setIdx)
+    
     const inserts = []
     toComplete.forEach(ex => {
-      for (let i = 0; i < ex.sets; i++) {
-        inserts.push({ exercise_id: ex.id, date: TODAY, set_index: i })
-      }
+      inserts.push({ exercise_id: ex.id, date: TODAY, set_index: setIdx })
     })
 
     if (inserts.length > 0) {
@@ -524,19 +524,23 @@ export default function App() {
     setTracking(prev => {
       const next = { ...prev, [TODAY]: { ...(prev[TODAY]??{}) } }
       toComplete.forEach(ex => {
-        next[TODAY][ex.id] = Array.from({ length: ex.sets }, () => true)
+        if (!next[TODAY][ex.id]) next[TODAY][ex.id] = []
+        next[TODAY][ex.id][setIdx] = true
       })
       return next
     })
   }
 
   async function handleBatchUndo(setKey) {
+    const setIdx = setKey === 'morning' ? 0 : setKey === 'afternoon' ? 1 : 2
     const toUndo = exercises.filter(e => e.unlocked)
     const exerciseIds = toUndo.map(e => e.id)
+    
     if (exerciseIds.length > 0) {
       await supabase.from('set_logs')
         .delete()
         .eq('date', TODAY)
+        .eq('set_index', setIdx)
         .in('exercise_id', exerciseIds)
     }
 
@@ -551,7 +555,11 @@ export default function App() {
     setTracking(prev => {
       const next = { ...prev, [TODAY]: { ...(prev[TODAY]??{}) } }
       toUndo.forEach(ex => {
-        delete next[TODAY][ex.id]
+        if (next[TODAY][ex.id]) {
+          const arr = [...next[TODAY][ex.id]]
+          arr[setIdx] = false
+          next[TODAY][ex.id] = arr
+        }
       })
       return next
     })
