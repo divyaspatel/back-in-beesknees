@@ -156,7 +156,7 @@ function seededRand(seed) {
   return x - Math.floor(x)
 }
 
-function GardenSection({ exercises, tracking }) {
+function GardenSection({ exercises, tracking, completedSets }) {
   const [counts, setCounts] = useState({ morning: 0, afternoon: 0, evening: 0 })
 
   useEffect(() => {
@@ -165,13 +165,13 @@ function GardenSection({ exercises, tracking }) {
     
     exercises.forEach(ex => {
       const sets = today[ex.id] ?? []
-      if (sets[0]) newCounts.morning += (ex.reps || 0)
-      if (sets[1]) newCounts.afternoon += (ex.reps || 0)
-      if (sets[2]) newCounts.evening += (ex.reps || 0)
+      if (sets[0] && completedSets.morning?.completed) newCounts.morning += (ex.reps || 0)
+      if (sets[1] && completedSets.afternoon?.completed) newCounts.afternoon += (ex.reps || 0)
+      if (sets[2] && completedSets.evening?.completed) newCounts.evening += (ex.reps || 0)
     })
     
     setCounts(newCounts)
-  }, [exercises, tracking])
+  }, [exercises, tracking, completedSets])
 
   const total = counts.morning + counts.afternoon + counts.evening
 
@@ -205,14 +205,14 @@ function GardenSection({ exercises, tracking }) {
         <div style={{ position:'relative', borderRadius:10, overflow:'hidden', border:'1px solid '+C.amberMd }}>
           <img src={`${import.meta.env.BASE_URL}garden-bg.jpg`} style={{ width:'100%', display:'block' }} alt="garden"/>
           
-          {/* Layer 1: Morning (Vibrant Pink) */}
-          {renderFlowerLayer(counts.morning, 1000, 'saturate(1.5) brightness(1.1)')}
+          {/* Layer 1: Morning (Electric Pink) */}
+          {renderFlowerLayer(counts.morning, 1000, 'saturate(2) brightness(1.1)')}
           
-          {/* Layer 2: Afternoon (Sunny Yellow) */}
-          {renderFlowerLayer(counts.afternoon, 2000, 'hue-rotate(-55deg) saturate(6) brightness(1.2)')}
+          {/* Layer 2: Afternoon (Golden Yellow) */}
+          {renderFlowerLayer(counts.afternoon, 2000, 'hue-rotate(110deg) saturate(8) brightness(1.3)')}
           
           {/* Layer 3: Evening (Royal Purple) */}
-          {renderFlowerLayer(counts.evening, 3000, 'hue-rotate(65deg) saturate(4) brightness(0.9)')}
+          {renderFlowerLayer(counts.evening, 3000, 'hue-rotate(-45deg) saturate(5) brightness(1)')}
         </div>
       </div>
     </div>
@@ -681,7 +681,7 @@ export default function App() {
           </div>
 
           <MonthCalendar dayStatus={dayStatus} onDayTap={setSelectedDay}/>
-          <GardenSection exercises={exercises} tracking={tracking}/>
+          <GardenSection exercises={exercises} tracking={tracking} completedSets={completedSets}/>
 
           <h2 style={{ fontFamily:"'Fredoka',sans-serif", fontSize:18, color:C.amberDk, marginBottom:10 }}>Today's Exercises</h2>
           {unlocked.length===0 ? (
