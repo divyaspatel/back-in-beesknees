@@ -12,6 +12,17 @@ export const getBostonHour = () => {
   return parseInt(formatter.format(new Date()), 10);
 };
 
+export const getBostonDate = () => {
+  const options = {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  };
+  const formatter = new Intl.DateTimeFormat('en-CA', options); // en-CA gives YYYY-MM-DD
+  return formatter.format(new Date());
+};
+
 export const TIME_WINDOWS = {
   morning: { start: 7, end: 10, label: '7 AM - 10 AM', emoji: '🌅' },
   afternoon: { start: 10, end: 13, label: '10 AM - 1 PM', emoji: '🌞' },

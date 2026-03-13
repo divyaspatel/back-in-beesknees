@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from './lib/supabase'
-import { getBostonHour } from './lib/timeUtils'
+import { getBostonHour, getBostonDate } from './lib/timeUtils'
 import ExerciseSet from './components/ExerciseSet'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const _now = new Date()
-const TODAY = _now.toISOString().slice(0, 10)
+const TODAY = getBostonDate()
 const MONTH_START = new Date(_now.getFullYear(), _now.getMonth(), 1).toISOString().slice(0, 10)
 const MONTH_END = new Date(_now.getFullYear(), _now.getMonth() + 1, 0).toISOString().slice(0, 10)
 const DAY_LETTERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -650,7 +650,7 @@ export default function App() {
                 isCompleted={!!completedSets.morning?.completed}
                 notes={completedSets.morning?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="/photo-incentive/photo1.png"
+                photoUrl="photo-incentive/photo1.png"
               />
               <ExerciseSet 
                 setKey="afternoon"
@@ -658,7 +658,7 @@ export default function App() {
                 isCompleted={!!completedSets.afternoon?.completed}
                 notes={completedSets.afternoon?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="/photo-incentive/photo2.png"
+                photoUrl="photo-incentive/photo2.png"
               />
               <ExerciseSet 
                 setKey="evening"
@@ -666,7 +666,7 @@ export default function App() {
                 isCompleted={!!completedSets.evening?.completed}
                 notes={completedSets.evening?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="/photo-incentive/photo3.png"
+                photoUrl="photo-incentive/photo3.png"
               />
             </div>
           )}
