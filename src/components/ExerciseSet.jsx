@@ -118,9 +118,25 @@ const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComp
                 </button>
               </div>
             ) : (
-              <div className="reward-section animate-fade-in">
-                <FlowerDisplay count={flowerCount} color={getSetColor()} />
-                <PhotoIncentive photoUrl={photoUrl} />
+              <div className="reward-section animate-fade-in" style={{ 
+                marginTop: '20px', 
+                padding: '20px', 
+                background: 'rgba(253, 230, 138, 0.2)', 
+                borderRadius: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                alignItems: 'center'
+              }}>
+                <div style={{ width: '100%' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#92400E', display: 'block', marginBottom: '8px', textAlign: 'center' }}>
+                    🌸 YOUR REWARD GARDEN
+                  </span>
+                  <FlowerDisplay count={flowerCount} color={getSetColor()} />
+                </div>
+                <div style={{ width: '100%', borderTop: '1px solid rgba(245, 158, 11, 0.1)', paddingTop: '16px' }}>
+                  <PhotoIncentive photoUrl={photoUrl} />
+                </div>
               </div>
             )}
           </div>

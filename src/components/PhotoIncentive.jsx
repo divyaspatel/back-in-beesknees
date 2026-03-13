@@ -8,40 +8,47 @@ const PhotoIncentive = ({ photoUrl }) => {
 
   return (
     <div className="photo-incentive" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-      <p style={{ fontSize: '0.8rem', color: '#ffb703', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#92400E', fontWeight: 'bold', marginBottom: '0.75rem' }}>
         🌟 Today's Reward Photo Revealed!
       </p>
-      <div style={{ position: 'relative', display: 'inline-block' }}>
+      <div style={{ position: 'relative', display: 'inline-block', minHeight: '150px', background: '#FEF3C7', borderRadius: '12px', padding: '10px', minWidth: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img 
           src={photoUrl} 
           alt="Reward" 
           style={{ 
             maxWidth: '100%', 
+            maxHeight: '400px',
             borderRadius: '12px', 
             boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-            cursor: 'zoom-in'
+            cursor: 'zoom-in',
+            display: 'block'
           }} 
           onClick={() => setIsZoomed(true)}
+          onError={(e) => {
+            e.target.style.display = 'none';
+            e.target.parentNode.style.minHeight = '60px';
+          }}
         />
         <div style={{ 
           position: 'absolute', 
-          bottom: '10px', 
-          right: '10px', 
+          bottom: '15px', 
+          right: '15px', 
           display: 'flex', 
-          gap: '8px' 
+          gap: '8px',
+          zIndex: 10
         }}>
           <button 
             onClick={() => setIsZoomed(true)}
-            style={{ background: 'white', border: 'none', borderRadius: '50%', p: '6px', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}
+            style={{ background: 'white', border: 'none', borderRadius: '50%', padding: '8px', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.2)', display: 'flex' }}
           >
-            <ZoomIn size={18} color="#ffb703" />
+            <ZoomIn size={18} color="#F59E0B" />
           </button>
           <a 
             href={photoUrl} 
             download 
-            style={{ background: 'white', border: 'none', borderRadius: '50%', p: '6px', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ background: 'white', border: 'none', borderRadius: '50%', padding: '8px', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            <Download size={18} color="#ffb703" />
+            <Download size={18} color="#F59E0B" />
           </a>
         </div>
       </div>

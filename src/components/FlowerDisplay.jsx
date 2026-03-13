@@ -3,8 +3,8 @@ import React from 'react';
 const FlowerDisplay = ({ count, color = '#ffb703' }) => {
   const flowerEmoji = color === 'pink' ? '🌸' : color === 'yellow' ? '🌼' : '🪻';
   
-  // Limiting the number of displayed flowers for performance
-  const displayCount = Math.min(count, 50);
+  // Limiting the number of displayed flowers for performance and clean look
+  const displayCount = Math.min(count, 40);
   const remainingCount = Math.max(0, count - displayCount);
 
   return (

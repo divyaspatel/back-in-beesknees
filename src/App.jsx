@@ -650,7 +650,7 @@ export default function App() {
                 isCompleted={!!completedSets.morning?.completed}
                 notes={completedSets.morning?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="photo-incentive/photo1.png"
+                photoUrl="/back-in-beesknees/photo-incentive/photo1.png"
               />
               <ExerciseSet 
                 setKey="afternoon"
@@ -658,7 +658,7 @@ export default function App() {
                 isCompleted={!!completedSets.afternoon?.completed}
                 notes={completedSets.afternoon?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="photo-incentive/photo2.png"
+                photoUrl="/back-in-beesknees/photo-incentive/photo2.png"
               />
               <ExerciseSet 
                 setKey="evening"
@@ -666,7 +666,7 @@ export default function App() {
                 isCompleted={!!completedSets.evening?.completed}
                 notes={completedSets.evening?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="photo-incentive/photo3.png"
+                photoUrl="/back-in-beesknees/photo-incentive/photo3.png"
               />
             </div>
           )}
