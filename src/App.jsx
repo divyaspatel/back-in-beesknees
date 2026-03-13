@@ -205,14 +205,14 @@ function GardenSection({ exercises, tracking }) {
         <div style={{ position:'relative', borderRadius:10, overflow:'hidden', border:'1px solid '+C.amberMd }}>
           <img src={`${import.meta.env.BASE_URL}garden-bg.jpg`} style={{ width:'100%', display:'block' }} alt="garden"/>
           
-          {/* Layer 1: Morning (Pink - Default) */}
-          {renderFlowerLayer(counts.morning, 1000, 'none')}
+          {/* Layer 1: Morning (Vibrant Pink) */}
+          {renderFlowerLayer(counts.morning, 1000, 'saturate(1.5) brightness(1.1)')}
           
-          {/* Layer 2: Afternoon (Yellow) */}
-          {renderFlowerLayer(counts.afternoon, 2000, 'hue-rotate(-45deg) brightness(1.2)')}
+          {/* Layer 2: Afternoon (Sunny Yellow) */}
+          {renderFlowerLayer(counts.afternoon, 2000, 'hue-rotate(-55deg) saturate(6) brightness(1.2)')}
           
-          {/* Layer 3: Evening (Purple) */}
-          {renderFlowerLayer(counts.evening, 3000, 'hue-rotate(60deg) saturate(1.5)')}
+          {/* Layer 3: Evening (Royal Purple) */}
+          {renderFlowerLayer(counts.evening, 3000, 'hue-rotate(65deg) saturate(4) brightness(0.9)')}
         </div>
       </div>
     </div>
