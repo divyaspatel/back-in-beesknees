@@ -72,10 +72,25 @@ const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComp
 
       {isOpen && (
         <div style={{ marginTop: '16px', borderTop: '1px solid #F3F4F6', paddingTop: '16px' }}>
+          {/* Exercise List Restoration */}
+          <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Exercises in this set
+            </span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px' }}>
+              {exercises.map((ex, i) => (
+                <div key={i} style={{ display: 'contents' }}>
+                  <div style={{ fontSize: '0.9rem', color: '#92400E', fontWeight: 500 }}>{ex.name}</div>
+                  <div style={{ fontSize: '0.85rem', color: '#D97706', fontWeight: 700 }}>{ex.sets} × {ex.reps}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {!isCompleted ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#92400E' }}>Batch Notes</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#92400E' }}>Your Note</span>
                 <textarea 
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
