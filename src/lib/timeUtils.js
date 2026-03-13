@@ -18,7 +18,11 @@ export const TIME_WINDOWS = {
   evening: { start: 13, end: 17, label: '1 PM - 5 PM', emoji: '🌇' },
 };
 
+export const ENFORCE_TIMING_RULES = false; // Set to false to allow completing sets anytime
+
 export const getWindowStatus = (key) => {
+  if (!ENFORCE_TIMING_RULES) return 'active';
+  
   const currentHour = getBostonHour();
   const window = TIME_WINDOWS[key];
   
