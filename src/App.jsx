@@ -160,13 +160,14 @@ function GardenSection({ exercises, tracking }) {
   const [flowerCount, setFlowerCount] = useState(0)
 
   useEffect(() => {
-    const repsMap = {}
-    exercises.forEach(e => { repsMap[e.id] = e.reps })
-    supabase.from('set_logs').select('exercise_id').then(({ data }) => {
-      if (!data) return
-      const total = data.reduce((sum, log) => sum + (repsMap[log.exercise_id] || 0), 0)
-      setFlowerCount(Math.min(total, 300))
+    const today = tracking[getBostonDate()] ?? {}
+    let total = 0
+    exercises.forEach(ex => {
+      const setsDone = (today[ex.id] ?? []).filter(Boolean).length
+      total += setsDone * (ex.reps || 0)
     })
+    // Limit to 300 flowers for visual performance
+    setFlowerCount(Math.min(today ? total : 0, 300))
   }, [exercises, tracking])
 
   const flowers = Array.from({ length: flowerCount }, (_, i) => ({
@@ -503,17 +504,7 @@ export default function App() {
   function titleHoldEnd() { clearTimeout(holdRef.current) }
 
   async function handleBatchComplete(setKey, notes) {
-    const categories = {
-      morning: 'Strength', // Example mapping, in real app we might just filter
-      afternoon: 'Mobility',
-      evening: 'Balance'
-    }
-    // For this implementation, let's filter unlocked exercises for the set
-    // In a real scenario, we might have an 'exercise_sets' table or similar.
-    // For now, let's assume all unlocked exercises are part of these sets.
     const toComplete = exercises.filter(e => e.unlocked)
-    
-    // Create log entries for ALL sets of ALL unlocked exercises
     const inserts = []
     toComplete.forEach(ex => {
       for (let i = 0; i < ex.sets; i++) {
@@ -522,7 +513,6 @@ export default function App() {
     })
 
     if (inserts.length > 0) {
-      // Use upsert to avoid duplicate errors if some were already done
       await supabase.from('set_logs').upsert(inserts, { onConflict: 'exercise_id,date,set_index' })
     }
 
@@ -531,11 +521,37 @@ export default function App() {
       [setKey]: { completed: true, notes, timestamp: new Date().toISOString() }
     }))
 
-    // Update local tracking state to reflect batch completion
     setTracking(prev => {
       const next = { ...prev, [TODAY]: { ...(prev[TODAY]??{}) } }
       toComplete.forEach(ex => {
         next[TODAY][ex.id] = Array.from({ length: ex.sets }, () => true)
+      })
+      return next
+    })
+  }
+
+  async function handleBatchUndo(setKey) {
+    const toUndo = exercises.filter(e => e.unlocked)
+    const exerciseIds = toUndo.map(e => e.id)
+    if (exerciseIds.length > 0) {
+      await supabase.from('set_logs')
+        .delete()
+        .eq('date', TODAY)
+        .in('exercise_id', exerciseIds)
+    }
+
+    setCompletedSets(prev => {
+      const next = { ...prev }
+      if (next[setKey]) {
+        next[setKey] = { ...next[setKey], completed: false }
+      }
+      return next
+    })
+
+    setTracking(prev => {
+      const next = { ...prev, [TODAY]: { ...(prev[TODAY]??{}) } }
+      toUndo.forEach(ex => {
+        delete next[TODAY][ex.id]
       })
       return next
     })
@@ -651,7 +667,8 @@ export default function App() {
                 isCompleted={!!completedSets.morning?.completed}
                 notes={completedSets.morning?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl={`/back-in-beesknees/${getRandomPhoto('morning' + TODAY)}`}
+                onUndo={handleBatchUndo}
+                photoUrl={`/back-in-beesknees/${getRandomPhoto('morning' + TODAY)}?v=${Date.now()}`}
               />
               <ExerciseSet 
                 setKey="afternoon"
@@ -659,7 +676,8 @@ export default function App() {
                 isCompleted={!!completedSets.afternoon?.completed}
                 notes={completedSets.afternoon?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl={`/back-in-beesknees/${getRandomPhoto('afternoon' + TODAY)}`}
+                onUndo={handleBatchUndo}
+                photoUrl={`/back-in-beesknees/${getRandomPhoto('afternoon' + TODAY)}?v=${Date.now()}`}
               />
               <ExerciseSet 
                 setKey="evening"
@@ -667,7 +685,8 @@ export default function App() {
                 isCompleted={!!completedSets.evening?.completed}
                 notes={completedSets.evening?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl={`/back-in-beesknees/${getRandomPhoto('evening' + TODAY)}`}
+                onUndo={handleBatchUndo}
+                photoUrl={`/back-in-beesknees/${getRandomPhoto('evening' + TODAY)}?v=${Date.now()}`}
               />
             </div>
           )}

@@ -34,5 +34,6 @@ export const getRandomPhoto = (seed) => {
     index = Math.floor(Math.random() * REWARD_PHOTOS.length);
   }
   
-  return `photo-incentive/${REWARD_PHOTOS[index]}`;
+  const filename = REWARD_PHOTOS[index];
+  return `photo-incentive/${encodeURIComponent(filename)}`;
 };

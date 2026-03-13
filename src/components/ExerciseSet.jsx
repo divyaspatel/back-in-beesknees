@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle, Clock, Lock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, ChevronUp, CheckCircle, Clock, Lock, RotateCcw } from 'lucide-react';
 import { getWindowStatus, TIME_WINDOWS } from '../lib/timeUtils';
 import FlowerDisplay from './FlowerDisplay';
 import PhotoIncentive from './PhotoIncentive';
 
-const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComplete, photoUrl }) => {
+const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComplete, onUndo, photoUrl }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [notes, setNotes] = useState(savedNotes || '');
   const windowStatus = getWindowStatus(setKey);
   const windowInfo = TIME_WINDOWS[setKey];
+
+  // Sync internal notes with prop if it changes (e.g., from undo)
+  useEffect(() => {
+    if (savedNotes !== undefined) setNotes(savedNotes);
+  }, [savedNotes]);
 
   const handleComplete = () => {
     if (!notes.trim()) {
@@ -16,6 +21,12 @@ const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComp
       return;
     }
     onComplete(setKey, notes);
+  };
+
+  const handleUndo = () => {
+    if (confirm("Move this set back to 'not done'? The flowers will be removed from your garden, but your note will stay.")) {
+      onUndo(setKey);
+    }
   };
 
   const getSetColor = () => {
@@ -137,6 +148,24 @@ const ExerciseSet = ({ setKey, exercises, isCompleted, notes: savedNotes, onComp
                 <div style={{ width: '100%', borderTop: '1px solid rgba(245, 158, 11, 0.1)', paddingTop: '16px' }}>
                   <PhotoIncentive photoUrl={photoUrl} />
                 </div>
+                <button 
+                  onClick={handleUndo}
+                  style={{ 
+                    marginTop: '8px',
+                    padding: '8px 12px', 
+                    fontSize: '0.75rem', 
+                    color: '#9CA3AF', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '4px',
+                    fontFamily: 'inherit',
+                    background: 'transparent',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px'
+                  }}
+                >
+                  <RotateCcw size={12} /> Mark as Not Done
+                </button>
               </div>
             )}
           </div>
