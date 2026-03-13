@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from './lib/supabase'
 import { getBostonHour, getBostonDate } from './lib/timeUtils'
+import { getRandomPhoto } from './lib/photoUtils'
 import ExerciseSet from './components/ExerciseSet'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -650,7 +651,7 @@ export default function App() {
                 isCompleted={!!completedSets.morning?.completed}
                 notes={completedSets.morning?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="/back-in-beesknees/photo-incentive/photo1.png"
+                photoUrl={`/back-in-beesknees/${getRandomPhoto('morning' + TODAY)}`}
               />
               <ExerciseSet 
                 setKey="afternoon"
@@ -658,7 +659,7 @@ export default function App() {
                 isCompleted={!!completedSets.afternoon?.completed}
                 notes={completedSets.afternoon?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="/back-in-beesknees/photo-incentive/photo2.png"
+                photoUrl={`/back-in-beesknees/${getRandomPhoto('afternoon' + TODAY)}`}
               />
               <ExerciseSet 
                 setKey="evening"
@@ -666,7 +667,7 @@ export default function App() {
                 isCompleted={!!completedSets.evening?.completed}
                 notes={completedSets.evening?.notes}
                 onComplete={handleBatchComplete}
-                photoUrl="/back-in-beesknees/photo-incentive/photo3.png"
+                photoUrl={`/back-in-beesknees/${getRandomPhoto('evening' + TODAY)}`}
               />
             </div>
           )}
