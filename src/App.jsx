@@ -157,40 +157,62 @@ function seededRand(seed) {
 }
 
 function GardenSection({ exercises, tracking }) {
-  const [flowerCount, setFlowerCount] = useState(0)
+  const [counts, setCounts] = useState({ morning: 0, afternoon: 0, evening: 0 })
 
   useEffect(() => {
     const today = tracking[getBostonDate()] ?? {}
-    let total = 0
+    const newCounts = { morning: 0, afternoon: 0, evening: 0 }
+    
     exercises.forEach(ex => {
-      const setsDone = (today[ex.id] ?? []).filter(Boolean).length
-      total += setsDone * (ex.reps || 0)
+      const sets = today[ex.id] ?? []
+      if (sets[0]) newCounts.morning += (ex.reps || 0)
+      if (sets[1]) newCounts.afternoon += (ex.reps || 0)
+      if (sets[2]) newCounts.evening += (ex.reps || 0)
     })
-    // Limit to 300 flowers for visual performance
-    setFlowerCount(Math.min(today ? total : 0, 300))
+    
+    setCounts(newCounts)
   }, [exercises, tracking])
 
-  const flowers = Array.from({ length: flowerCount }, (_, i) => ({
-    x: seededRand(i * 3 + 1) * 92 + 4,
-    y: seededRand(i * 3 + 2) * 32 + 56,
-    rot: (seededRand(i * 3 + 3) - 0.5) * 20,
-  }))
+  const total = counts.morning + counts.afternoon + counts.evening
+
+  // Helper to generate a deterministic list of flowers with a specific color filter
+  const renderFlowerLayer = (count, seedOffset, filter) => {
+    const displayCount = Math.min(count, 100) // Cap per layer for performance
+    return Array.from({ length: displayCount }, (_, i) => {
+      const x = seededRand(i * 3 + seedOffset) * 92 + 4
+      const y = seededRand(i * 3 + seedOffset + 1) * 32 + 56
+      const rot = (seededRand(i * 3 + seedOffset + 2) - 0.5) * 20
+      return (
+        <img key={`${seedOffset}-${i}`} src={`${import.meta.env.BASE_URL}flower-single.png`}
+          style={{ 
+            position:'absolute', left:`${x}%`, top:`${y}%`, width:16, height:'auto',
+            transform:`translateX(-50%) rotate(${rot}deg)`, 
+            pointerEvents:'none',
+            filter: filter
+          }}
+          alt=""/>
+      )
+    })
+  }
 
   return (
     <div style={{ background:C.white, borderRadius:16, overflow:'hidden', marginBottom:16, boxShadow:'0 1px 4px rgba(0,0,0,0.06)' }}>
       <div style={{ padding:'12px 14px 8px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <span style={{ fontFamily:"'Fredoka',sans-serif", fontSize:16, color:C.amberDk }}>My Garden</span>
-        <span style={{ fontSize:12, color:C.gray }}>{flowerCount} flowers</span>
+        <span style={{ fontSize:12, color:C.gray }}>{total} flowers</span>
       </div>
       <div style={{ padding:'0 8px 8px' }}>
         <div style={{ position:'relative', borderRadius:10, overflow:'hidden', border:'1px solid '+C.amberMd }}>
           <img src={`${import.meta.env.BASE_URL}garden-bg.jpg`} style={{ width:'100%', display:'block' }} alt="garden"/>
-          {flowers.map((f, i) => (
-            <img key={i} src={`${import.meta.env.BASE_URL}flower-single.png`}
-              style={{ position:'absolute', left:`${f.x}%`, top:`${f.y}%`, width:16, height:'auto',
-                transform:`translateX(-50%) rotate(${f.rot}deg)`, pointerEvents:'none' }}
-              alt=""/>
-          ))}
+          
+          {/* Layer 1: Morning (Pink - Default) */}
+          {renderFlowerLayer(counts.morning, 1000, 'none')}
+          
+          {/* Layer 2: Afternoon (Yellow) */}
+          {renderFlowerLayer(counts.afternoon, 2000, 'hue-rotate(-45deg) brightness(1.2)')}
+          
+          {/* Layer 3: Evening (Purple) */}
+          {renderFlowerLayer(counts.evening, 3000, 'hue-rotate(60deg) saturate(1.5)')}
         </div>
       </div>
     </div>
@@ -456,7 +478,7 @@ export default function App() {
   const [tracking, setTracking] = useState({})
   const [completedSets, setCompletedSets] = useState(() => {
     const saved = localStorage.getItem('beesknees_completed_sets');
-    const today = new Date().toDateString();
+    const today = TODAY;
     const savedDate = localStorage.getItem('beesknees_sets_date');
     if (saved && savedDate === today) return JSON.parse(saved);
     return {};
@@ -467,7 +489,7 @@ export default function App() {
   
   useEffect(() => {
     localStorage.setItem('beesknees_completed_sets', JSON.stringify(completedSets));
-    localStorage.setItem('beesknees_sets_date', new Date().toDateString());
+    localStorage.setItem('beesknees_sets_date', TODAY);
   }, [completedSets]);
 
   const [loading, setLoading] = useState(true)
